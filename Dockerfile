@@ -22,8 +22,8 @@ WORKDIR /usr/src/app
 COPY pnpm-lock.yaml .
 COPY package.json .
 
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
 COPY --from=build /usr/src/app/dist ./dist
 
-CMD ["node", "dist/main.js"]
+CMD ["pnpm", "run", "start"]
