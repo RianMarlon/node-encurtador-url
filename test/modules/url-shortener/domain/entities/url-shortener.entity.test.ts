@@ -1,6 +1,7 @@
 import { UrlShortener } from '@/modules/url-shortener/domain/entities/url-shortener.entity';
 import { generateNanoId } from '@/shared/utils/generate-nano-id';
 import { BaseEntity } from '@/shared/domain/base-entity';
+import { NotificationError } from '@/shared/domain/errors/notification-error';
 
 jest.mock('@/shared/utils/generate-nano-id', () => ({
   generateNanoId: jest.fn(),
@@ -87,6 +88,114 @@ describe('UrlShortener', () => {
       expect(urlShortener.shortUrl).toBe(`${process.env.BASE_URL}/${urlKey}`);
       expect(urlShortener.originalUrl).toBe(originalUrl);
       expect(urlShortener.clickCount).toBe(clickCount);
+    });
+
+    it('should throw NotificationError when originalUrl is missing', () => {
+      expect(() => {
+        // @ts-expect-error - Intentionally passing invalid props for testing
+        new UrlShortener({});
+      }).toThrow(NotificationError);
+    });
+
+    it('should throw NotificationError with correct error details when originalUrl is missing', () => {
+      try {
+        // @ts-expect-error - Intentionally passing invalid props for testing
+        new UrlShortener({});
+        fail('Expected constructor to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotificationError);
+        const notificationError = error as NotificationError;
+
+        expect(notificationError.hasErrors()).toBe(true);
+
+        const errors = notificationError.getErrors();
+        expect(errors.length).toBe(1);
+        expect(errors[0].message).toBe('Original URL is required');
+        expect(errors[0].code).toBe('BAD_REQUEST');
+        expect(errors[0].context).toBe('UrlShortener');
+        expect(errors[0].field).toBe('originalUrl');
+      }
+    });
+
+    it('should throw NotificationError when originalUrl is not a valid URL', () => {
+      expect(() => {
+        new UrlShortener({ originalUrl: 'not-a-valid-url' });
+      }).toThrow(NotificationError);
+    });
+
+    it('should throw NotificationError with correct error details when originalUrl is invalid', () => {
+      try {
+        new UrlShortener({ originalUrl: 'not-a-valid-url' });
+        fail('Expected constructor to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotificationError);
+        const notificationError = error as NotificationError;
+
+        expect(notificationError.hasErrors()).toBe(true);
+
+        const errors = notificationError.getErrors();
+        expect(errors.length).toBe(1);
+        expect(errors[0].message).toBe('Original URL must be a valid URL');
+        expect(errors[0].code).toBe('BAD_REQUEST');
+        expect(errors[0].context).toBe('UrlShortener');
+        expect(errors[0].field).toBe('originalUrl');
+      }
+    });
+
+    it('should throw NotificationError with multiple errors when there are multiple validation issues', () => {
+      try {
+        // @ts-expect-error - Intentionally passing invalid props for testing
+        new UrlShortener({ originalUrl: null });
+        fail('Expected constructor to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotificationError);
+        const notificationError = error as NotificationError;
+
+        expect(notificationError.hasErrors()).toBe(true);
+
+        const errors = notificationError.getErrors();
+        expect(errors.length).toBeGreaterThan(0);
+
+        errors.forEach((err) => {
+          expect(err.code).toBe('BAD_REQUEST');
+          expect(err.context).toBe('UrlShortener');
+          expect(typeof err.message).toBe('string');
+        });
+      }
+    });
+
+    it('should accept valid URLs with different protocols', () => {
+      expect(() => {
+        new UrlShortener({ originalUrl: 'http://example.com' });
+      }).not.toThrow();
+
+      expect(() => {
+        new UrlShortener({ originalUrl: 'https://example.com' });
+      }).not.toThrow();
+
+      expect(() => {
+        new UrlShortener({ originalUrl: 'ftp://example.com' });
+      }).not.toThrow();
+    });
+
+    it('should accept valid URLs with query parameters and fragments', () => {
+      expect(() => {
+        new UrlShortener({
+          originalUrl: 'https://example.com/path?param1=value1&param2=value2#section1',
+        });
+      }).not.toThrow();
+    });
+
+    it('should accept valid URLs with ports', () => {
+      expect(() => {
+        new UrlShortener({ originalUrl: 'https://example.com:8080/path' });
+      }).not.toThrow();
+    });
+
+    it('should accept valid URLs with authentication', () => {
+      expect(() => {
+        new UrlShortener({ originalUrl: 'https://user:password@example.com' });
+      }).not.toThrow();
     });
   });
 

@@ -2,9 +2,7 @@ import { generateEntityID } from '../utils/generate-entity-id';
 
 export class BaseEntity {
   private _id: string;
-
   private _createdAt: Date;
-
   private _updatedAt: Date;
 
   constructor(id?: string, createdAt?: Date, updatedAt?: Date) {
