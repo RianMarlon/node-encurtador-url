@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true
+    },
+    "target": "es2022",
+    "transform": {
+      "legacyDecorator": true,
+      "decoratorMetadata": true
+    },
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "module": {
+    "type": "commonjs"
+  },
+  "minify": true,
+  "sourceMaps": false,
+  "exclude": [
+    ".*\\.test\\.ts$",
+    ".*\\.spec\\.ts$",
+    ".*__tests__.*",
+    ".*test.*"
+  ]
+}
