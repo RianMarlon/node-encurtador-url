@@ -1,0 +1,23 @@
+import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositories/url-shortener.repository';
+import { UrlShortener } from '@/modules/url-shortener/domain/entities/url-shortener.entity';
+import { CreateShortUrlOutputDTO } from './dto/create-short-url-output.dto';
+import { CreateShortUrlInputDTO } from './dto/create-short-url-input.dto';
+
+export class CreateShortUrlUseCase {
+  constructor(private readonly urlShortenerRepository: UrlShortenerRepository) {}
+
+  async execute(data: CreateShortUrlInputDTO): Promise<CreateShortUrlOutputDTO> {
+    const urlShortner = new UrlShortener({ originalUrl: data.originalUrl });
+
+    await this.urlShortenerRepository.create(urlShortner);
+
+    return {
+      id: urlShortner.id,
+      urlKey: urlShortner.urlKey,
+      shortUrl: urlShortner.shortUrl,
+      originalUrl: urlShortner.originalUrl,
+      createdAt: urlShortner.createdAt,
+      updatedAt: urlShortner.updatedAt,
+    };
+  }
+}
