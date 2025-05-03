@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositories/url-shortener.repository';
 import { ResolveShortUrlUseCase } from '@/modules/url-shortener/application/usecases/resolve-short-url/resolve-short-url.usecase';
 import { ResolveShortUrlInputDTO } from '@/modules/url-shortener/application/usecases/resolve-short-url/dto/resolve-short-url-input.dto';

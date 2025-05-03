@@ -58,6 +58,7 @@
   "dependencies": {
     "@prisma/client": "^6.7.0",
     "nanoid": "^3.3.11",
+    "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.10.0",
     "uuid": "^11.1.0",
     "yup": "^1.6.1"

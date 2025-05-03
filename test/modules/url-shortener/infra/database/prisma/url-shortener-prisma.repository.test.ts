@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { PrismaClient } from '@prisma/client';
 import { UrlShortener } from '@/modules/url-shortener/domain/entities/url-shortener.entity';
 import { UrlShortenerPrismaRepository } from '@/modules/url-shortener/infra/database/prisma/url-shortener-prisma.repository';

@@ -1,9 +1,15 @@
+import { inject, injectable } from 'tsyringe';
+
 import { PrismaClient } from '@prisma/client';
 import { UrlShortener } from '@/modules/url-shortener/domain/entities/url-shortener.entity';
 import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositories/url-shortener.repository';
 
+@injectable()
 export class UrlShortenerPrismaRepository implements UrlShortenerRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(
+    @inject('PrismaClient')
+    private readonly prisma: PrismaClient,
+  ) {}
 
   async findByUrlKey(urlKey: string): Promise<UrlShortener | null> {
     const urlShortenerData = await this.prisma.urlShortener.findUnique({
