@@ -53,5 +53,6 @@
     "nanoid": "^3.3.11",
     "uuid": "^11.1.0",
     "yup": "^1.6.1"
-  }
+  },
+  "packageManager": "pnpm@10.10.0"
 }
