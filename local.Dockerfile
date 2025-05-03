@@ -7,5 +7,6 @@ WORKDIR /usr/src/app
 COPY . .
 
 RUN pnpm install --frozen-lockfile
+RUN pnpm prisma generate
 
-CMD ["pnpm", "run", "dev"]
+CMD ["sh", "-c", "pnpm run migration:run && pnpm run dev"]

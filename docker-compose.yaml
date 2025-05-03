@@ -8,7 +8,7 @@ services:
       - '3000:3000'
     volumes:
       - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - app_node_modules:/usr/src/app/node_modules
     depends_on:
       postgres:
         condition: service_healthy
@@ -32,4 +32,5 @@ services:
       start_period: 10s
 
 volumes:
+  app_node_modules:
   postgres_data:

@@ -11,6 +11,7 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
+RUN pnpm prisma generate
 RUN pnpm run build
 
 FROM node:22.15.0-alpine
