@@ -4,6 +4,7 @@ import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositor
 import { ResolveShortUrlUseCase } from '@/modules/url-shortener/application/usecases/resolve-short-url/resolve-short-url.usecase';
 import { ResolveShortUrlInputDTO } from '@/modules/url-shortener/application/usecases/resolve-short-url/dto/resolve-short-url-input.dto';
 import { UrlShortener } from '@/modules/url-shortener/domain/entities/url-shortener.entity';
+import { NotificationError } from '@/shared/domain/errors/notification-error';
 
 describe('ResolveShortUrlUseCase', () => {
   const mockUrlShortenerRepository: jest.Mocked<UrlShortenerRepository> = {
@@ -53,12 +54,28 @@ describe('ResolveShortUrlUseCase', () => {
     });
   });
 
-  it('should throw an error if URL is not found', async () => {
+  it('should throw a NotificationError if URL is not found', async () => {
     mockUrlShortenerRepository.findByUrlKey.mockResolvedValueOnce(null);
 
-    await expect(resolveShortUrlUseCase.execute(inputData)).rejects.toThrow('Url not found');
+    await expect(resolveShortUrlUseCase.execute(inputData)).rejects.toThrow(NotificationError);
+    
+    try {
+      await resolveShortUrlUseCase.execute(inputData);
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotificationError);
+      const notificationError = error as NotificationError;
+      const errors = notificationError.getErrors();
+      
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toEqual({
+        code: 'NOT_FOUND',
+        message: 'Url not found',
+        context: 'UrlShortener',
+        field: 'urlKey',
+      });
+    }
 
-    expect(mockUrlShortenerRepository.findByUrlKey).toHaveBeenCalledTimes(1);
+    expect(mockUrlShortenerRepository.findByUrlKey).toHaveBeenCalledTimes(2);
     expect(mockUrlShortenerRepository.findByUrlKey).toHaveBeenCalledWith(mockUrlKey);
 
     expect(mockUrlShortenerRepository.update).not.toHaveBeenCalled();
