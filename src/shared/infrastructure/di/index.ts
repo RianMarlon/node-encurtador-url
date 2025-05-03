@@ -7,7 +7,8 @@ import { UrlShortenerPrismaRepository } from '@/modules/url-shortener/infra/data
 import { CreateShortUrlUseCase } from '@/modules/url-shortener/application/usecases/create-short-url/create-short-url.usecase';
 import { ResolveShortUrlUseCase } from '@/modules/url-shortener/application/usecases/resolve-short-url/resolve-short-url.usecase';
 
-container.registerSingleton<PrismaClient>('PrismaClient', PrismaClient);
+const prismaClient = new PrismaClient();
+container.registerInstance('PrismaClient', prismaClient);
 
 container.registerSingleton<UrlShortenerRepository>(
   'UrlShortenerRepository',

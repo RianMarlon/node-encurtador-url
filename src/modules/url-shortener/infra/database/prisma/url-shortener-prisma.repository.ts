@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe';
-
 import { PrismaClient } from '@prisma/client';
+
 import { UrlShortener } from '@/modules/url-shortener/domain/entities/url-shortener.entity';
 import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositories/url-shortener.repository';
 

@@ -1,13 +1,15 @@
 import 'reflect-metadata';
-
-import '@/shared/infrastructure/di';
+import { container } from '@/shared/infrastructure/di';
 
 import fastify from 'fastify';
 import cors from '@fastify/cors';
 
 import { urlShortenerRoutes } from '@/modules/url-shortener/infra/http/fastify/url-shortener.routes';
+import { PrismaClient } from '@prisma/client/extension';
 
-export const app = fastify({});
+export const app = fastify({
+  logger: true,
+});
 
 app.register(cors, {
   origin: true,
@@ -19,6 +21,9 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 const start = async () => {
   try {
+    const prismaClient = container.resolve<PrismaClient>('PrismaClient');
+    await prismaClient.$connect();
+
     await app.listen({ port: PORT, host: '0.0.0.0' });
     console.log(`Server is running on port ${PORT}`);
   } catch (err) {
@@ -35,6 +40,9 @@ for (const signal of signals) {
     app.log.info(`${signal} signal received, closing HTTP server...`);
 
     try {
+      const prismaClient = container.resolve<PrismaClient>('PrismaClient');
+      await prismaClient.$disconnect();
+
       await app.close();
       app.log.info('HTTP server closed');
       process.exit(0);
