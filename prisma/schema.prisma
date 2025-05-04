@@ -16,7 +16,7 @@ datasource db {
 model UrlShortener {
   id          String
   urlKey      String   @unique(map: "uniq_url_shorteners_url_key") @map("url_key") @db.Char(6)
-  originalUrl String   @map("original_url") @db.VarChar(255)
+  originalUrl String   @map("original_url")
   clickCount  Int      @default(0) @map("click_count")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
