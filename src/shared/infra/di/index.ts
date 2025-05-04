@@ -8,8 +8,8 @@ import { CreateShortUrlUseCase } from '@/modules/url-shortener/application/useca
 import { ResolveShortUrlUseCase } from '@/modules/url-shortener/application/usecases/resolve-short-url/resolve-short-url.usecase';
 import { BcryptHashProvider } from '@/shared/providers/hash/implementations/bcrypt-hash-provider';
 import { HashProvider } from '@/shared/providers/hash/interfaces/hash-provider.interface';
-import { UserRepository } from '@/modules/users/domain/repositories/user.repository';
-import { UserPrismaRepository } from '@/modules/users/infra/database/prisma/user-prisma.repository';
+import { UserRepository } from '@/modules/user/domain/repositories/user.repository';
+import { UserPrismaRepository } from '@/modules/user/infra/database/prisma/user-prisma.repository';
 
 const prismaClient = new PrismaClient();
 container.registerInstance('PrismaClient', prismaClient);

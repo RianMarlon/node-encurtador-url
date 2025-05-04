@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 
 import { PrismaClient } from '@prisma/client';
-import { User } from '@/modules/users/domain/entities/user.entity';
-import { UserPrismaRepository } from '@/modules/users/infra/database/prisma/user-prisma.repository';
+import { User } from '@/modules/user/domain/entities/user.entity';
+import { UserPrismaRepository } from '@/modules/user/infra/database/prisma/user-prisma.repository';
 
 const mockFindFirst = jest.fn();
 const mockCreate = jest.fn();
