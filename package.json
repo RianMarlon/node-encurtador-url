@@ -34,6 +34,7 @@
     "@swc/core": "^1.11.24",
     "@swc/jest": "^0.2.38",
     "@types/jest": "^29.5.14",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.15.3",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",

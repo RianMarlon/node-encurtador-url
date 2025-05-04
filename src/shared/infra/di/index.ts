@@ -11,10 +11,12 @@ import { HashProvider } from '@/shared/providers/hash/interfaces/hash-provider.i
 import { UserRepository } from '@/modules/user/domain/repositories/user.repository';
 import { UserPrismaRepository } from '@/modules/user/infra/database/prisma/user-prisma.repository';
 import { CreateUserUseCase } from '@/modules/user/application/usecases/create-user/create-user.usecase';
+import { JsonWebTokenProvider } from '@/shared/providers/jwt/implementations/jsonwebtoken-provider';
 
 const prismaClient = new PrismaClient();
 container.registerInstance('PrismaClient', prismaClient);
 container.registerSingleton<HashProvider>('HashProvider', BcryptHashProvider);
+container.registerSingleton('JwtProvider', JsonWebTokenProvider);
 
 container.registerSingleton<UrlShortenerRepository>(
   'UrlShortenerRepository',
