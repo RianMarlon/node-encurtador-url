@@ -1,6 +1,13 @@
+export type NotificationErrorCode =
+  | 'BAD_REQUEST'
+  | 'NOT_FOUND'
+  | 'UNAUTHORIZED'
+  | 'FORBIDDEN'
+  | 'TOO_MANY_REQUESTS';
+
 export interface NotificationErrorItem {
   message: string;
-  code: string;
+  code: NotificationErrorCode;
   context?: string;
   field?: string;
 }

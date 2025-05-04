@@ -6,6 +6,7 @@ import cors from '@fastify/cors';
 
 import { urlShortenerRoutes } from '@/modules/url-shortener/infra/http/fastify/url-shortener.routes';
 import { PrismaClient } from '@prisma/client/extension';
+import { NotificationError } from '@/shared/domain/errors/notification-error';
 
 export const app = fastify({
   logger: true,
@@ -16,6 +17,32 @@ app.register(cors, {
 });
 
 app.register(urlShortenerRoutes);
+
+app.setErrorHandler((error, request, reply) => {
+  if (error instanceof NotificationError) {
+    const codeToStatusCode = {
+      BAD_REQUEST: 400,
+      NOT_FOUND: 404,
+      UNAUTHORIZED: 401,
+      FORBIDDEN: 403,
+      TOO_MANY_REQUESTS: 429,
+    };
+    const errors = error.getErrors();
+    const statusCode = codeToStatusCode[errors[0].code];
+
+    reply.status(statusCode).send({
+      errors: errors.map((error) => ({
+        message: error.message,
+        field: error.field,
+      })),
+    });
+
+    return;
+  }
+
+  app.log.error(error);
+  reply.status(500).send({ error: error.message });
+});
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
