@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositories/url-shortener.repository';
 import { ResolveShortUrlUseCase } from '@/modules/url-shortener/application/usecases/resolve-short-url/resolve-short-url.usecase';
-import { ResolveShortUrlInputDTO } from '@/modules/url-shortener/application/usecases/resolve-short-url/dto/resolve-short-url-input.dto';
+import { ResolveShortUrlUseCaseInputDTO } from '@/modules/url-shortener/application/usecases/resolve-short-url/dto/resolve-short-url-usecase-input.dto';
 import { UrlShortener } from '@/modules/url-shortener/domain/entities/url-shortener.entity';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 
@@ -18,7 +18,7 @@ describe('ResolveShortUrlUseCase', () => {
   const mockUrlKey = 'abc123';
   const mockOriginalUrl = 'https://example.com/long-url';
 
-  const inputData: ResolveShortUrlInputDTO = {
+  const inputData: ResolveShortUrlUseCaseInputDTO = {
     urlKey: mockUrlKey,
   };
 
@@ -58,14 +58,14 @@ describe('ResolveShortUrlUseCase', () => {
     mockUrlShortenerRepository.findByUrlKey.mockResolvedValueOnce(null);
 
     await expect(resolveShortUrlUseCase.execute(inputData)).rejects.toThrow(NotificationError);
-    
+
     try {
       await resolveShortUrlUseCase.execute(inputData);
     } catch (error) {
       expect(error).toBeInstanceOf(NotificationError);
       const notificationError = error as NotificationError;
       const errors = notificationError.getErrors();
-      
+
       expect(errors).toHaveLength(1);
       expect(errors[0]).toEqual({
         code: 'NOT_FOUND',

@@ -2,8 +2,8 @@ import { inject, injectable } from 'tsyringe';
 
 import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositories/url-shortener.repository';
 import { UrlShortener } from '@/modules/url-shortener/domain/entities/url-shortener.entity';
-import { CreateShortUrlOutputDTO } from './dto/create-short-url-output.dto';
-import { CreateShortUrlInputDTO } from './dto/create-short-url-input.dto';
+import { CreateShortUrlUseCaseOutputDTO } from './dto/create-short-url-usecase-output.dto';
+import { CreateShortUrlUseCaseInputDTO } from './dto/create-short-url-usecase-input.dto';
 
 @injectable()
 export class CreateShortUrlUseCase {
@@ -12,7 +12,7 @@ export class CreateShortUrlUseCase {
     private readonly urlShortenerRepository: UrlShortenerRepository,
   ) {}
 
-  async execute(data: CreateShortUrlInputDTO): Promise<CreateShortUrlOutputDTO> {
+  async execute(data: CreateShortUrlUseCaseInputDTO): Promise<CreateShortUrlUseCaseOutputDTO> {
     const urlShortner = new UrlShortener({ originalUrl: data.originalUrl });
 
     await this.urlShortenerRepository.create(urlShortner);

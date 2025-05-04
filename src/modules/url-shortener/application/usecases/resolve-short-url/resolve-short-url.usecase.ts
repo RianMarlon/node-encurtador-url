@@ -1,8 +1,8 @@
 import { inject, injectable } from 'tsyringe';
 
 import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositories/url-shortener.repository';
-import { ResolveShortUrlInputDTO } from './dto/resolve-short-url-input.dto';
-import { ResolveShortUrlOutputDTO } from './dto/resolve-short-url-output.dto';
+import { ResolveShortUrlUseCaseInputDTO } from './dto/resolve-short-url-usecase-input.dto';
+import { ResolveShortUrlUseCaseOutputDTO } from './dto/resolve-short-url-usecase-output.dto';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 
 @injectable()
@@ -12,7 +12,7 @@ export class ResolveShortUrlUseCase {
     private readonly urlShortenerRepository: UrlShortenerRepository,
   ) {}
 
-  async execute(data: ResolveShortUrlInputDTO): Promise<ResolveShortUrlOutputDTO> {
+  async execute(data: ResolveShortUrlUseCaseInputDTO): Promise<ResolveShortUrlUseCaseOutputDTO> {
     const urlShortener = await this.urlShortenerRepository.findByUrlKey(data.urlKey);
 
     if (!urlShortener)

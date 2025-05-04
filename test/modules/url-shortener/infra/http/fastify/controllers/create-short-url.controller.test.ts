@@ -36,12 +36,8 @@ describe('CreateShortUrlController', () => {
 
   it('should create a short URL and return 201 status code', async () => {
     const mockResult = {
-      id: 'mock-id',
-      urlKey: 'abc123',
       shortUrl: 'http://short.url/abc123',
       originalUrl: 'https://example.com/long-url',
-      createdAt: new Date(),
-      updatedAt: new Date(),
     };
 
     mockCreateShortUrlUseCase.execute.mockResolvedValueOnce(mockResult);
