@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { container } from '@/shared/infrastructure/di';
+import { container } from '@/shared/infra/di';
 
 import fastify from 'fastify';
 import cors from '@fastify/cors';

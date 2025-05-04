@@ -1,12 +1,12 @@
 {
   "name": "encurtador-url",
   "version": "1.0.0",
-  "main": "src/shared/infrastructure/http/fastify/server.js",
+  "main": "src/shared/infra/http/fastify/server.js",
   "scripts": {
     "prepare": "husky",
     "build": "rimraf dist && swc src -d dist  --config-file .swcrc.build --strip-leading-paths",
-    "start": "node dist/shared/infrastructure/http/fastify/server.js",
-    "dev": "nodemon --exec node -r @swc-node/register -r tsconfig-paths/register src/shared/infrastructure/http/fastify/server.ts",
+    "start": "node dist/shared/infra/http/fastify/server.js",
+    "dev": "nodemon --exec node -r @swc-node/register -r tsconfig-paths/register src/shared/infra/http/fastify/server.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

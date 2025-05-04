@@ -51,7 +51,7 @@ describe('ResolveShortUrlController', () => {
       urlKey: 'abc123',
     });
 
-    expect(mockReply.redirect).toHaveBeenCalledWith(301, mockOriginalUrl);
+    expect(mockReply.redirect).toHaveBeenCalledWith(mockOriginalUrl);
   });
 
   it('should propagate NotificationError from the use case', async () => {
