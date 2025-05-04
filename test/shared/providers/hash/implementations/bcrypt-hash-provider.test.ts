@@ -1,8 +1,9 @@
 import 'reflect-metadata';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { BcryptHashProvider } from '@/shared/providers/hash/implementations/bcrypt-hash-provider';
 
-jest.mock('bcrypt', () => ({
+jest.mock('bcryptjs', () => ({
+  genSalt: jest.fn().mockResolvedValue(10),
   hash: jest.fn(),
   compare: jest.fn(),
 }));
@@ -11,7 +12,6 @@ describe('BcryptHashProvider', () => {
   let bcryptHashProvider: BcryptHashProvider;
   const mockPayload = 'password123';
   const mockHashedPayload = 'hashed_password123';
-  const mockSalt = 10;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -24,7 +24,7 @@ describe('BcryptHashProvider', () => {
 
       const result = await bcryptHashProvider.hash(mockPayload);
 
-      expect(bcrypt.hash).toHaveBeenCalledWith(mockPayload, mockSalt);
+      expect(bcrypt.hash).toHaveBeenCalledWith(mockPayload, 10);
       expect(bcrypt.hash).toHaveBeenCalledTimes(1);
       expect(result).toBe(mockHashedPayload);
     });
@@ -62,7 +62,7 @@ describe('BcryptHashProvider', () => {
       (bcrypt.hash as jest.Mock).mockRejectedValueOnce(mockError);
 
       await expect(bcryptHashProvider.hash(mockPayload)).rejects.toThrow(mockError);
-      expect(bcrypt.hash).toHaveBeenCalledWith(mockPayload, mockSalt);
+      expect(bcrypt.hash).toHaveBeenCalledWith(mockPayload, 10);
       expect(bcrypt.hash).toHaveBeenCalledTimes(1);
     });
   });
