@@ -39,11 +39,7 @@ describe('CreateShortUrlUseCase', () => {
     expect(mockUrlShortenerRepository.create).toHaveBeenCalledTimes(1);
 
     expect(result.originalUrl).toEqual(inputData.originalUrl);
-    expect(result.id).toBeDefined();
-    expect(result.urlKey).toBeDefined();
     expect(result.shortUrl).toBeDefined();
-    expect(result.createdAt).toBeDefined();
-    expect(result.updatedAt).toBeDefined();
   });
 
   it('should throw an error if repository.create fails', async () => {

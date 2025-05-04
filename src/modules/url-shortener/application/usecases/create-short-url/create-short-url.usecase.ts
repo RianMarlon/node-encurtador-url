@@ -18,12 +18,8 @@ export class CreateShortUrlUseCase {
     await this.urlShortenerRepository.create(urlShortner);
 
     return {
-      id: urlShortner.id,
-      urlKey: urlShortner.urlKey,
       shortUrl: urlShortner.shortUrl,
       originalUrl: urlShortner.originalUrl,
-      createdAt: urlShortner.createdAt,
-      updatedAt: urlShortner.updatedAt,
     };
   }
 }
