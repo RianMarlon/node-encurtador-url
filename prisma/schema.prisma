@@ -20,18 +20,21 @@ model UrlShortener {
   clickCount  Int      @default(0) @map("click_count")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
+  userId      String?  @map("user_id")
+  user        User?    @relation(fields: [userId], references: [id], map: "fk_url_shorteners_user_id")
 
   @@id([id], map: "pk_url_shorteners")
   @@map("url_shorteners")
 }
 
 model User {
-  id         String
-  name       String   @db.VarChar(100)
-  email      String   @db.VarChar(255)
-  password   String   @db.VarChar(255)
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id            String
+  name          String         @db.VarChar(100)
+  email         String         @db.VarChar(255)
+  password      String         @db.VarChar(255)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  urlShorteners UrlShortener[]
 
   @@id([id], map: "pk_users")
   @@map("users")
