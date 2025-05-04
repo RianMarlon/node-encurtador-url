@@ -8,6 +8,9 @@ export class BcryptHashProvider implements HashProvider {
   private readonly salt: number = 10;
 
   public async hash(payload: string): Promise<string> {
+    if (!payload || payload.trim() === '') {
+      return '';
+    }
     return bcrypt.hash(payload, this.salt);
   }
 

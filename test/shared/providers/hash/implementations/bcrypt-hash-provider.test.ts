@@ -29,6 +29,34 @@ describe('BcryptHashProvider', () => {
       expect(result).toBe(mockHashedPayload);
     });
 
+    it('should return empty string when payload is null', async () => {
+      const result = await bcryptHashProvider.hash(null as unknown as string);
+
+      expect(bcrypt.hash).not.toHaveBeenCalled();
+      expect(result).toBe('');
+    });
+
+    it('should return empty string when payload is undefined', async () => {
+      const result = await bcryptHashProvider.hash(undefined as unknown as string);
+
+      expect(bcrypt.hash).not.toHaveBeenCalled();
+      expect(result).toBe('');
+    });
+
+    it('should return empty string when payload is an empty string', async () => {
+      const result = await bcryptHashProvider.hash('');
+
+      expect(bcrypt.hash).not.toHaveBeenCalled();
+      expect(result).toBe('');
+    });
+
+    it('should return empty string when payload contains only whitespace', async () => {
+      const result = await bcryptHashProvider.hash('   ');
+
+      expect(bcrypt.hash).not.toHaveBeenCalled();
+      expect(result).toBe('');
+    });
+
     it('should throw an error if bcrypt.hash fails', async () => {
       const mockError = new Error('Hash error');
       (bcrypt.hash as jest.Mock).mockRejectedValueOnce(mockError);
