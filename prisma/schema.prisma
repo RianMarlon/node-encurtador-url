@@ -21,6 +21,18 @@ model UrlShortener {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  @@map("url_shorteners")
   @@id([id], map: "pk_url_shorteners")
+  @@map("url_shorteners")
+}
+
+model User {
+  id         String
+  name       String   @db.VarChar(100)
+  email      String   @db.VarChar(255)
+  password   String   @db.VarChar(255)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@id([id], map: "pk_users")
+  @@map("users")
 }
