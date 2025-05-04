@@ -54,14 +54,14 @@ describe('LoginController', () => {
   it('should pass request body to login use case', async () => {
     const customEmail = 'custom@example.com';
     const customPassword = 'custom_password';
-    
+
     const customRequest = {
       body: {
         email: customEmail,
         password: customPassword,
       },
     } as unknown as FastifyRequest;
-    
+
     mockLoginUseCase.execute.mockResolvedValueOnce({ accessToken: 'token' });
 
     await loginController.handle(customRequest, mockReply);
@@ -79,7 +79,7 @@ describe('LoginController', () => {
         code: 'UNAUTHORIZED',
       },
     ]);
-    
+
     mockLoginUseCase.execute.mockRejectedValueOnce(notificationError);
 
     await expect(loginController.handle(mockRequest, mockReply)).rejects.toThrow(notificationError);
