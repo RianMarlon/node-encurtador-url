@@ -12,11 +12,13 @@ import { UserRepository } from '@/modules/user/domain/repositories/user.reposito
 import { UserPrismaRepository } from '@/modules/user/infra/database/prisma/user-prisma.repository';
 import { CreateUserUseCase } from '@/modules/user/application/usecases/create-user/create-user.usecase';
 import { JsonWebTokenProvider } from '@/shared/providers/jwt/implementations/jsonwebtoken-provider';
+import { LoginUseCase } from '@/modules/auth/application/usecases/login/login.usecase';
+import { JwtProvider } from '@/shared/providers/jwt/interfaces/jwt-provider.interface';
 
 const prismaClient = new PrismaClient();
 container.registerInstance('PrismaClient', prismaClient);
 container.registerSingleton<HashProvider>('HashProvider', BcryptHashProvider);
-container.registerSingleton('JwtProvider', JsonWebTokenProvider);
+container.registerSingleton<JwtProvider>('JwtProvider', JsonWebTokenProvider);
 
 container.registerSingleton<UrlShortenerRepository>(
   'UrlShortenerRepository',
@@ -28,5 +30,6 @@ container.registerSingleton<UserRepository>('UserRepository', UserPrismaReposito
 container.registerSingleton(CreateShortUrlUseCase);
 container.registerSingleton(ResolveShortUrlUseCase);
 container.registerSingleton(CreateUserUseCase);
+container.registerSingleton(LoginUseCase);
 
 export { container };
