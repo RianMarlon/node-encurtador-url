@@ -5,6 +5,7 @@ import fastify from 'fastify';
 import cors from '@fastify/cors';
 
 import { urlShortenerRoutes } from '@/modules/url-shortener/infra/http/fastify/url-shortener.routes';
+import { userRoutes } from '@/modules/user/infra/http/fastify/user.routes';
 import { PrismaClient } from '@prisma/client/extension';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 
@@ -17,6 +18,7 @@ app.register(cors, {
 });
 
 app.register(urlShortenerRoutes);
+app.register(userRoutes);
 
 app.setErrorHandler((error, request, reply) => {
   if (error instanceof NotificationError) {
