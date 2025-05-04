@@ -10,6 +10,7 @@ import { BcryptHashProvider } from '@/shared/providers/hash/implementations/bcry
 import { HashProvider } from '@/shared/providers/hash/interfaces/hash-provider.interface';
 import { UserRepository } from '@/modules/user/domain/repositories/user.repository';
 import { UserPrismaRepository } from '@/modules/user/infra/database/prisma/user-prisma.repository';
+import { CreateUserUseCase } from '@/modules/user/application/usecases/create-user/create-user.usecase';
 
 const prismaClient = new PrismaClient();
 container.registerInstance('PrismaClient', prismaClient);
@@ -24,5 +25,6 @@ container.registerSingleton<UserRepository>('UserRepository', UserPrismaReposito
 
 container.registerSingleton(CreateShortUrlUseCase);
 container.registerSingleton(ResolveShortUrlUseCase);
+container.registerSingleton(CreateUserUseCase);
 
 export { container };
