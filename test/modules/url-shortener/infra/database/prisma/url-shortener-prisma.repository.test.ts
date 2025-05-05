@@ -6,6 +6,7 @@ import { UrlShortenerPrismaRepository } from '@/modules/url-shortener/infra/data
 
 const mockFindUnique = jest.fn();
 const mockFindMany = jest.fn();
+const mockFindFirst = jest.fn();
 const mockCreate = jest.fn();
 const mockUpdate = jest.fn();
 
@@ -15,6 +16,7 @@ jest.mock('@prisma/client', () => {
       urlShortener: {
         findUnique: mockFindUnique,
         findMany: mockFindMany,
+        findFirst: mockFindFirst,
         create: mockCreate,
         update: mockUpdate,
       },
@@ -203,6 +205,53 @@ describe('UrlShortenerPrismaRepository', () => {
           originalUrl: 'https://example.com',
           clickCount: 10,
           updatedAt: mockDate,
+        },
+      });
+    });
+  });
+
+  describe('findByUrlKeyAndUserId', () => {
+    it('should return null when url key and user id combination is not found', async () => {
+      mockFindFirst.mockResolvedValue(null);
+
+      const result = await repository.findByUrlKeyAndUserId('abc123', 'user-123');
+
+      expect(result).toBeNull();
+      expect(mockFindFirst).toHaveBeenCalledWith({
+        where: {
+          urlKey: 'abc123',
+          userId: 'user-123',
+        },
+      });
+    });
+
+    it('should return a UrlShortener entity when url key and user id combination is found', async () => {
+      const mockDate = new Date();
+      const mockUrlShortenerData = {
+        id: 'test-id',
+        urlKey: 'abc123',
+        originalUrl: 'https://example.com',
+        clickCount: 5,
+        createdAt: mockDate,
+        updatedAt: mockDate,
+        userId: 'user-123',
+      };
+
+      mockFindFirst.mockResolvedValue(mockUrlShortenerData);
+
+      const result = await repository.findByUrlKeyAndUserId('abc123', 'user-123');
+
+      expect(result).toBeInstanceOf(UrlShortener);
+      expect(result?.id).toBe('test-id');
+      expect(result?.urlKey).toBe('abc123');
+      expect(result?.originalUrl).toBe('https://example.com');
+      expect(result?.clickCount).toBe(5);
+      expect(result?.createdAt).toBe(mockDate);
+      expect(result?.updatedAt).toBe(mockDate);
+      expect(mockFindFirst).toHaveBeenCalledWith({
+        where: {
+          urlKey: 'abc123',
+          userId: 'user-123',
         },
       });
     });

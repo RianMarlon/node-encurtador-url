@@ -55,6 +55,28 @@ export class UrlShortenerPrismaRepository implements UrlShortenerRepository {
     });
   }
 
+  async findByUrlKeyAndUserId(urlKey: string, userId: string): Promise<UrlShortener | null> {
+    const urlShortenerData = await this.prisma.urlShortener.findFirst({
+      where: {
+        urlKey,
+        userId,
+      },
+    });
+
+    if (!urlShortenerData) {
+      return null;
+    }
+
+    return new UrlShortener({
+      id: urlShortenerData.id,
+      urlKey: urlShortenerData.urlKey,
+      originalUrl: urlShortenerData.originalUrl,
+      clickCount: urlShortenerData.clickCount,
+      createdAt: urlShortenerData.createdAt,
+      updatedAt: urlShortenerData.updatedAt,
+    });
+  }
+
   async create(entity: UrlShortener, userId?: string): Promise<void> {
     await this.prisma.urlShortener.create({
       data: {

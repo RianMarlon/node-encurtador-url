@@ -254,47 +254,46 @@ describe('UrlShortener', () => {
       const initialUrl = 'https://example.com';
       const newUrl = 'https://newexample.com';
       const urlShortener = new UrlShortener({ originalUrl: initialUrl });
-      
+
       expect(urlShortener.originalUrl).toBe(initialUrl);
-      
+
       urlShortener.changeOriginalUrl(newUrl);
-      
+
       expect(urlShortener.originalUrl).toBe(newUrl);
     });
 
     it('should reset click count to zero when changing the URL', () => {
-      const urlShortener = new UrlShortener({ 
+      const urlShortener = new UrlShortener({
         originalUrl: 'https://example.com',
-        clickCount: 10
+        clickCount: 10,
       });
-      
+
       expect(urlShortener.clickCount).toBe(10);
-      
+
       urlShortener.changeOriginalUrl('https://newexample.com');
-      
+
       expect(urlShortener.clickCount).toBe(0);
     });
 
     it('should update the updatedAt timestamp', () => {
       const initialDate = new Date('2025-01-01T00:00:00Z');
-      const urlShortener = new UrlShortener({ 
+      const urlShortener = new UrlShortener({
         originalUrl: 'https://example.com',
-        updatedAt: initialDate
+        updatedAt: initialDate,
       });
-      
-      // Mock Date.now for consistent testing
+
       const newDate = new Date('2025-02-01T00:00:00Z');
       jest.spyOn(global, 'Date').mockImplementationOnce(() => newDate as unknown as Date);
-      
+
       urlShortener.changeOriginalUrl('https://newexample.com');
-      
+
       expect(urlShortener.updatedAt).toEqual(newDate);
       expect(urlShortener.updatedAt).not.toEqual(initialDate);
     });
 
     it('should throw NotificationError when new URL is invalid', () => {
       const urlShortener = new UrlShortener({ originalUrl: 'https://example.com' });
-      
+
       expect(() => {
         urlShortener.changeOriginalUrl('invalid-url');
       }).toThrow(NotificationError);
@@ -302,7 +301,7 @@ describe('UrlShortener', () => {
 
     it('should throw NotificationError with correct error details when new URL is invalid', () => {
       const urlShortener = new UrlShortener({ originalUrl: 'https://example.com' });
-      
+
       try {
         urlShortener.changeOriginalUrl('invalid-url');
         fail('Expected changeOriginalUrl to throw');
