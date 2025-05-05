@@ -4,6 +4,7 @@ import { CreateShortUrlController } from './controllers/create-short-url.control
 import { ResolveShortUrlController } from './controllers/resolve-short-url.controller';
 import { ListShortenedUrlsByUserIdController } from './controllers/list-shortened-urls-by-user-id.controller';
 import { UpdateOriginalUrlByUrlKeyController } from './controllers/update-original-url-by-url-key.controller';
+import { DeleteShortUrlByUrlKeyController } from './controllers/delete-short-url-by-url-key.controller';
 import { AuthMiddleware } from '@/shared/infra/http/fastify/middlewares/auth.middleware';
 
 export async function urlShortenerRoutes(app: FastifyInstance): Promise<void> {
@@ -11,6 +12,7 @@ export async function urlShortenerRoutes(app: FastifyInstance): Promise<void> {
   const resolveShortUrlController = new ResolveShortUrlController();
   const listShortenedUrlsByUserIdController = new ListShortenedUrlsByUserIdController();
   const updateOriginalUrlByUrlKeyController = new UpdateOriginalUrlByUrlKeyController();
+  const deleteShortUrlByUrlKeyController = new DeleteShortUrlByUrlKeyController();
   const authMiddleware = new AuthMiddleware();
 
   app.post(
@@ -35,6 +37,14 @@ export async function urlShortenerRoutes(app: FastifyInstance): Promise<void> {
       preHandler: (request, reply) => authMiddleware.requireAuth(request, reply),
     },
     (request, reply) => updateOriginalUrlByUrlKeyController.handle(request, reply),
+  );
+
+  app.delete(
+    '/urls/:urlKey',
+    {
+      preHandler: (request, reply) => authMiddleware.requireAuth(request, reply),
+    },
+    (request, reply) => deleteShortUrlByUrlKeyController.handle(request, reply),
   );
 
   app.get('/:urlKey', (request, reply) => resolveShortUrlController.handle(request, reply));
