@@ -15,13 +15,15 @@ datasource db {
 
 model UrlShortener {
   id          String
-  urlKey      String   @unique(map: "uniq_url_shorteners_url_key") @map("url_key") @db.Char(6)
-  originalUrl String   @map("original_url")
-  clickCount  Int      @default(0) @map("click_count")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  userId      String?  @map("user_id")
-  user        User?    @relation(fields: [userId], references: [id], map: "fk_url_shorteners_user_id")
+  urlKey      String    @unique(map: "uniq_url_shorteners_url_key") @map("url_key") @db.Char(6)
+  originalUrl String    @map("original_url")
+  clickCount  Int       @default(0) @map("click_count")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+
+  userId String? @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id], map: "fk_url_shorteners_user_id")
 
   @@id([id], map: "pk_url_shorteners")
   @@map("url_shorteners")
