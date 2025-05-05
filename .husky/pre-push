@@ -1,0 +1,15 @@
+#!/bin/sh
+echo "🔍 Running lint..."
+pnpm run lint
+LINT_STATUS=$?
+
+echo "🧪 Running tests..."
+pnpm test
+TEST_STATUS=$?
+
+if [ $LINT_STATUS -ne 0 ] || [ $TEST_STATUS -ne 0 ]; then
+  echo "❌ Push blocked: lint or tests failed"
+  exit 1
+fi
+
+echo "✅ Lint and tests passed. Proceeding with push..."
