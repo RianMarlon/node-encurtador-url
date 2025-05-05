@@ -6,4 +6,5 @@ export interface UrlShortenerRepository {
   findByUrlKeyAndUserId(urlKey: string, userId: string): Promise<UrlShortener | null>;
   create(entity: UrlShortener, userId?: string): Promise<void>;
   update(entity: UrlShortener): Promise<void>;
+  delete(entity: UrlShortener): Promise<void>;
 }

@@ -103,4 +103,16 @@ export class UrlShortenerPrismaRepository implements UrlShortenerRepository {
       },
     });
   }
+
+  async delete(entity: UrlShortener): Promise<void> {
+    await this.prisma.urlShortener.update({
+      where: {
+        id: entity.id,
+      },
+      data: {
+        updatedAt: entity.updatedAt,
+        deletedAt: entity.deletedAt,
+      },
+    });
+  }
 }

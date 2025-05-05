@@ -256,4 +256,59 @@ describe('UrlShortenerPrismaRepository', () => {
       });
     });
   });
+
+  describe('delete', () => {
+    it('should update the record with deletedAt timestamp', async () => {
+      const mockDate = new Date();
+      const deletedAt = new Date();
+      const urlShortener = new UrlShortener({
+        id: 'test-id',
+        urlKey: 'abc123',
+        originalUrl: 'https://example.com',
+        clickCount: 10,
+        createdAt: mockDate,
+        updatedAt: mockDate,
+      });
+
+      jest.spyOn(urlShortener, 'deletedAt', 'get').mockReturnValue(deletedAt);
+      jest.spyOn(urlShortener, 'updatedAt', 'get').mockReturnValue(deletedAt);
+
+      await repository.delete(urlShortener);
+
+      expect(mockUpdate).toHaveBeenCalledWith({
+        where: { id: 'test-id' },
+        data: {
+          updatedAt: deletedAt,
+          deletedAt: deletedAt,
+        },
+      });
+    });
+
+    it('should perform a soft delete by setting deletedAt timestamp', async () => {
+      const mockDate = new Date();
+      const urlShortener = new UrlShortener({
+        id: 'test-id',
+        urlKey: 'abc123',
+        originalUrl: 'https://example.com',
+        clickCount: 10,
+        createdAt: mockDate,
+        updatedAt: mockDate,
+      });
+
+      urlShortener.delete();
+
+      await repository.delete(urlShortener);
+
+      expect(mockUpdate).toHaveBeenCalledWith({
+        where: { id: 'test-id' },
+        data: {
+          updatedAt: expect.any(Date),
+          deletedAt: expect.any(Date),
+        },
+      });
+
+      const updateCall = mockUpdate.mock.calls[0][0];
+      expect(updateCall.data.updatedAt).toBe(updateCall.data.deletedAt);
+    });
+  });
 });
