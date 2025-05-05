@@ -42,7 +42,10 @@ describe('UrlShortenerPrismaRepository', () => {
 
       expect(result).toBeNull();
       expect(mockFindUnique).toHaveBeenCalledWith({
-        where: { urlKey: 'abc123' },
+        where: {
+          urlKey: 'abc123',
+          deletedAt: null,
+        },
       });
     });
 
@@ -55,6 +58,7 @@ describe('UrlShortenerPrismaRepository', () => {
         clickCount: 5,
         createdAt: mockDate,
         updatedAt: mockDate,
+        deletedAt: null,
       };
 
       mockFindUnique.mockResolvedValue(mockUrlShortenerData);
@@ -69,7 +73,24 @@ describe('UrlShortenerPrismaRepository', () => {
       expect(result?.createdAt).toBe(mockDate);
       expect(result?.updatedAt).toBe(mockDate);
       expect(mockFindUnique).toHaveBeenCalledWith({
-        where: { urlKey: 'abc123' },
+        where: {
+          urlKey: 'abc123',
+          deletedAt: null,
+        },
+      });
+    });
+
+    it('should return null when url key is found but record is deleted', async () => {
+      mockFindUnique.mockResolvedValue(null);
+
+      const result = await repository.findByUrlKey('deleted-key');
+
+      expect(result).toBeNull();
+      expect(mockFindUnique).toHaveBeenCalledWith({
+        where: {
+          urlKey: 'deleted-key',
+          deletedAt: null,
+        },
       });
     });
   });
@@ -82,7 +103,10 @@ describe('UrlShortenerPrismaRepository', () => {
 
       expect(result).toEqual([]);
       expect(mockFindMany).toHaveBeenCalledWith({
-        where: { userId: 'user-123' },
+        where: {
+          userId: 'user-123',
+          deletedAt: null,
+        },
         orderBy: { createdAt: 'desc' },
       });
     });
@@ -97,6 +121,7 @@ describe('UrlShortenerPrismaRepository', () => {
           clickCount: 5,
           createdAt: mockDate,
           updatedAt: mockDate,
+          deletedAt: null,
         },
         {
           id: 'test-id-2',
@@ -105,6 +130,7 @@ describe('UrlShortenerPrismaRepository', () => {
           clickCount: 10,
           createdAt: mockDate,
           updatedAt: mockDate,
+          deletedAt: null,
         },
       ];
 
@@ -124,7 +150,51 @@ describe('UrlShortenerPrismaRepository', () => {
       expect(result[1].originalUrl).toBe('https://example.com/2');
       expect(result[1].clickCount).toBe(10);
       expect(mockFindMany).toHaveBeenCalledWith({
-        where: { userId: 'user-123' },
+        where: {
+          userId: 'user-123',
+          deletedAt: null,
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+    });
+
+    it('should not return deleted URLs for the user', async () => {
+      const mockDate = new Date();
+      const deletedDate = new Date();
+
+      const mockUrlShortenerDataList = [
+        {
+          id: 'active-id-1',
+          urlKey: 'active1',
+          originalUrl: 'https://example.com/active1',
+          clickCount: 5,
+          createdAt: mockDate,
+          updatedAt: mockDate,
+          deletedAt: null,
+        },
+        {
+          id: 'deleted-id',
+          urlKey: 'deleted',
+          originalUrl: 'https://example.com/deleted',
+          clickCount: 3,
+          createdAt: mockDate,
+          updatedAt: deletedDate,
+          deletedAt: deletedDate,
+        },
+      ];
+
+      const filteredList = mockUrlShortenerDataList.filter((url) => url.deletedAt === null);
+      mockFindMany.mockResolvedValue(filteredList);
+
+      const result = await repository.findByUserId('user-123');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('active-id-1');
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: {
+          userId: 'user-123',
+          deletedAt: null,
+        },
         orderBy: { createdAt: 'desc' },
       });
     });
@@ -221,6 +291,7 @@ describe('UrlShortenerPrismaRepository', () => {
         where: {
           urlKey: 'abc123',
           userId: 'user-123',
+          deletedAt: null,
         },
       });
     });
@@ -235,6 +306,7 @@ describe('UrlShortenerPrismaRepository', () => {
         createdAt: mockDate,
         updatedAt: mockDate,
         userId: 'user-123',
+        deletedAt: null,
       };
 
       mockFindFirst.mockResolvedValue(mockUrlShortenerData);
@@ -252,6 +324,22 @@ describe('UrlShortenerPrismaRepository', () => {
         where: {
           urlKey: 'abc123',
           userId: 'user-123',
+          deletedAt: null,
+        },
+      });
+    });
+
+    it('should return null when url is deleted even if url key and user id match', async () => {
+      mockFindFirst.mockResolvedValue(null);
+
+      const result = await repository.findByUrlKeyAndUserId('abc123', 'user-123');
+
+      expect(result).toBeNull();
+      expect(mockFindFirst).toHaveBeenCalledWith({
+        where: {
+          urlKey: 'abc123',
+          userId: 'user-123',
+          deletedAt: null,
         },
       });
     });

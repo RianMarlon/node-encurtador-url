@@ -15,6 +15,7 @@ export class UrlShortenerPrismaRepository implements UrlShortenerRepository {
     const urlShortenerDataList = await this.prisma.urlShortener.findMany({
       where: {
         userId,
+        deletedAt: null,
       },
       orderBy: {
         createdAt: 'desc',
@@ -38,6 +39,7 @@ export class UrlShortenerPrismaRepository implements UrlShortenerRepository {
     const urlShortenerData = await this.prisma.urlShortener.findUnique({
       where: {
         urlKey,
+        deletedAt: null,
       },
     });
 
@@ -60,6 +62,7 @@ export class UrlShortenerPrismaRepository implements UrlShortenerRepository {
       where: {
         urlKey,
         userId,
+        deletedAt: null,
       },
     });
 
