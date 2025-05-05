@@ -22,4 +22,8 @@ export class BaseEntity {
   get updatedAt(): Date {
     return this._updatedAt;
   }
+
+  set updatedAt(updatedAt: Date) {
+    this._updatedAt = updatedAt;
+  }
 }

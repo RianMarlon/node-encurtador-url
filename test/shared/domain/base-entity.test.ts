@@ -85,4 +85,15 @@ describe('BaseEntity', () => {
       expect(entity.updatedAt).toBe(customUpdatedAt);
     });
   });
+
+  describe('setters', () => {
+    it('should update the updatedAt value when using the setter', () => {
+      const entity = new BaseEntity();
+      const newUpdatedAt = new Date('2025-06-15T10:45:00Z');
+
+      entity.updatedAt = newUpdatedAt;
+
+      expect(entity.updatedAt).toBe(newUpdatedAt);
+    });
+  });
 });
