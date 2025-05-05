@@ -34,4 +34,10 @@ container.registerSingleton(ListShortenedUrlsByUserIdUseCase);
 container.registerSingleton(CreateUserUseCase);
 container.registerSingleton(LoginUseCase);
 
+import { DeleteShortUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/delete-short-url-by-url-key/delete-short-url-by-url-key.usecase';
+import { UpdateOriginalUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/update-original-url-by-url-key/update-original-url-by-url-key.usecase';
+
+container.registerSingleton(DeleteShortUrlByUrlKeyUseCase);
+container.registerSingleton(UpdateOriginalUrlByUrlKeyUseCase);
+
 export { container };
