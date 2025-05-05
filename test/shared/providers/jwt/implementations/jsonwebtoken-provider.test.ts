@@ -15,6 +15,7 @@ describe('JsonWebTokenProvider', () => {
   const mockExpiresIn = 3600;
   const mockPayload: JwtPayload = { userId: '123', email: 'test@example.com' };
   const mockToken = 'mock.jwt.token';
+  const mockDecodedToken = { sub: 'user-123', name: 'Test User', email: 'test@example.com' };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -68,26 +69,24 @@ describe('JsonWebTokenProvider', () => {
   });
 
   describe('verify', () => {
-    it('should return true when token is valid', async () => {
-      (jwt.verify as jest.Mock).mockReturnValueOnce({ userId: '123' });
+    it('should return decoded token when token is valid', async () => {
+      (jwt.verify as jest.Mock).mockReturnValueOnce(mockDecodedToken);
 
       const result = await jsonWebTokenProvider.verify(mockToken);
 
       expect(jwt.verify).toHaveBeenCalledWith(mockToken, mockSecret);
       expect(jwt.verify).toHaveBeenCalledTimes(1);
-      expect(result).toBe(true);
+      expect(result).toEqual(mockDecodedToken);
     });
 
-    it('should return false when token verification fails', async () => {
+    it('should throw error when token verification fails', async () => {
       (jwt.verify as jest.Mock).mockImplementationOnce(() => {
-        throw new Error('Invalid token');
+        throw new Error('Some JWT error');
       });
 
-      const result = await jsonWebTokenProvider.verify(mockToken);
-
+      await expect(jsonWebTokenProvider.verify(mockToken)).rejects.toThrow('Invalid token');
       expect(jwt.verify).toHaveBeenCalledWith(mockToken, mockSecret);
       expect(jwt.verify).toHaveBeenCalledTimes(1);
-      expect(result).toBe(false);
     });
   });
 

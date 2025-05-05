@@ -12,12 +12,12 @@ export class JsonWebTokenProvider implements JwtProvider {
     return jwt.sign(payload, this.secret, { expiresIn: this.expiresIn });
   }
 
-  public async verify(token: string): Promise<boolean> {
+  public async verify<T extends JwtPayload>(token: string): Promise<T> {
     try {
-      jwt.verify(token, this.secret);
-      return true;
+      const decoded = jwt.verify(token, this.secret) as T;
+      return decoded;
     } catch {
-      return false;
+      throw new Error('Invalid token');
     }
   }
 

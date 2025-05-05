@@ -6,6 +6,10 @@
     "moduleResolution": "NodeNext",
     "rootDir": "./",
     "outDir": "./dist",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/shared/infra/http/fastify/@types"
+    ],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
