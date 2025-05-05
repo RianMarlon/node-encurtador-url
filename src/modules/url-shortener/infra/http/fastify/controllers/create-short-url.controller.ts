@@ -15,6 +15,7 @@ export class CreateShortUrlController {
 
     const result = await createShortUrlUseCase.execute({
       originalUrl,
+      userId: request.user?.id,
     });
 
     return reply.status(201).send(result);

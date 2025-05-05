@@ -32,7 +32,7 @@ export class UrlShortenerPrismaRepository implements UrlShortenerRepository {
     });
   }
 
-  async create(entity: UrlShortener): Promise<void> {
+  async create(entity: UrlShortener, userId?: string): Promise<void> {
     await this.prisma.urlShortener.create({
       data: {
         id: entity.id,
@@ -41,6 +41,7 @@ export class UrlShortenerPrismaRepository implements UrlShortenerRepository {
         clickCount: entity.clickCount,
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,
+        userId: userId ? userId : null,
       },
     });
   }

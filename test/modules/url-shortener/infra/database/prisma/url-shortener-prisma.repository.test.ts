@@ -71,7 +71,7 @@ describe('UrlShortenerPrismaRepository', () => {
   });
 
   describe('create', () => {
-    it('should create a new url shortener record', async () => {
+    it('should create a new url shortener record without userId', async () => {
       const mockDate = new Date();
       const urlShortener = new UrlShortener({
         id: 'test-id',
@@ -92,6 +92,34 @@ describe('UrlShortenerPrismaRepository', () => {
           clickCount: 0,
           createdAt: mockDate,
           updatedAt: mockDate,
+          userId: null,
+        },
+      });
+    });
+
+    it('should create a new url shortener record with userId', async () => {
+      const mockDate = new Date();
+      const urlShortener = new UrlShortener({
+        id: 'test-id',
+        urlKey: 'abc123',
+        originalUrl: 'https://example.com',
+        clickCount: 0,
+        createdAt: mockDate,
+        updatedAt: mockDate,
+      });
+      const userId = 'user-123';
+
+      await repository.create(urlShortener, userId);
+
+      expect(mockCreate).toHaveBeenCalledWith({
+        data: {
+          id: 'test-id',
+          urlKey: 'abc123',
+          originalUrl: 'https://example.com',
+          clickCount: 0,
+          createdAt: mockDate,
+          updatedAt: mockDate,
+          userId,
         },
       });
     });

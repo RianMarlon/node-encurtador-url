@@ -15,6 +15,7 @@ describe('CreateShortUrlController', () => {
     body: {
       originalUrl: 'https://example.com/long-url',
     },
+    user: undefined,
   } as unknown as FastifyRequest;
 
   const mockReply = {
@@ -47,10 +48,33 @@ describe('CreateShortUrlController', () => {
     expect(container.resolve).toHaveBeenCalledWith(CreateShortUrlUseCase);
     expect(mockCreateShortUrlUseCase.execute).toHaveBeenCalledWith({
       originalUrl: 'https://example.com/long-url',
+      userId: undefined,
     });
 
     expect(mockReply.status).toHaveBeenCalledWith(201);
     expect(mockReply.send).toHaveBeenCalledWith(mockResult);
+  });
+
+  it('should pass user ID when user is authenticated', async () => {
+    const userId = 'user-123';
+    const authenticatedRequest = {
+      ...mockRequest,
+      user: { id: userId },
+    } as unknown as FastifyRequest;
+
+    const mockResult = {
+      shortUrl: 'http://short.url/abc123',
+      originalUrl: 'https://example.com/long-url',
+    };
+
+    mockCreateShortUrlUseCase.execute.mockResolvedValueOnce(mockResult);
+
+    await createShortUrlController.handle(authenticatedRequest, mockReply);
+
+    expect(mockCreateShortUrlUseCase.execute).toHaveBeenCalledWith({
+      originalUrl: 'https://example.com/long-url',
+      userId,
+    });
   });
 
   it('should propagate errors from the use case', async () => {
@@ -63,6 +87,7 @@ describe('CreateShortUrlController', () => {
 
     expect(mockCreateShortUrlUseCase.execute).toHaveBeenCalledWith({
       originalUrl: 'https://example.com/long-url',
+      userId: undefined,
     });
 
     expect(mockReply.status).not.toHaveBeenCalled();
