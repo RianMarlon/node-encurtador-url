@@ -69,6 +69,13 @@ export class UrlShortener extends BaseEntity {
     return this._clickCount;
   }
 
+  changeOriginalUrl(originalUrl: string): void {
+    this.validate({ originalUrl });
+    this._originalUrl = originalUrl;
+    this._clickCount = 0;
+    this.updatedAt = new Date();
+  }
+
   incrementClickCount(): void {
     this._clickCount++;
   }
