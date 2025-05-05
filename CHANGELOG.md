@@ -5,6 +5,16 @@ Todas as alterações importantes neste projeto serão documentadas neste arquiv
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.2.0] - 04/05/2025
+
+### Alterações
+- Adicionado listagem de URLs encurtadas por usuário autenticado
+  - Endpoint para listar todas as URLs criadas por um usuário
+- Middleware de autenticação
+  - Verificação de autenticação em rotas
+
+[1.2.0]: https://github.com/RianMarlon/node-encurtador-url/releases/tag/v1.2.0
+
 ## [1.1.0] - 04/05/2025
 
 ### Alterações
