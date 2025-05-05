@@ -5,7 +5,9 @@ import { container } from 'tsyringe';
 import { ListShortenedUrlsByUserIdController } from '@/modules/url-shortener/infra/http/fastify/controllers/list-shortened-urls-by-user-id.controller';
 import { ListShortenedUrlsByUserIdUseCase } from '@/modules/url-shortener/application/usecases/list-shortened-urls-by-user-id/list-shortened-urls-by-user-id.usecase';
 
-jest.mock('@/modules/url-shortener/application/usecases/list-shortened-urls-by-user-id/list-shortened-urls-by-user-id.usecase');
+jest.mock(
+  '@/modules/url-shortener/application/usecases/list-shortened-urls-by-user-id/list-shortened-urls-by-user-id.usecase',
+);
 
 describe('ListShortenedUrlsByUserIdController', () => {
   let listShortenedUrlsByUserIdController: ListShortenedUrlsByUserIdController;
@@ -72,20 +74,16 @@ describe('ListShortenedUrlsByUserIdController', () => {
     expect(mockReply.send).toHaveBeenCalledWith(mockResult);
   });
 
-  it('should return 401 status code when user is not authenticated', async () => {
+  it('should throw error when user is not authenticated', async () => {
     // Arrange
     const unauthenticatedRequest = {
       user: undefined,
     } as unknown as FastifyRequest;
 
-    // Act
-    await listShortenedUrlsByUserIdController.handle(unauthenticatedRequest, mockReply);
-
-    // Assert
-    expect(mockReply.status).toHaveBeenCalledWith(401);
-    expect(mockReply.send).toHaveBeenCalledWith({
-      errors: [{ message: 'Authentication required' }],
-    });
+    // Act & Assert
+    await expect(
+      listShortenedUrlsByUserIdController.handle(unauthenticatedRequest, mockReply),
+    ).rejects.toThrow();
     expect(mockListShortenedUrlsByUserIdUseCase.execute).not.toHaveBeenCalled();
   });
 
@@ -95,7 +93,9 @@ describe('ListShortenedUrlsByUserIdController', () => {
     mockListShortenedUrlsByUserIdUseCase.execute.mockRejectedValueOnce(mockError);
 
     // Act & Assert
-    await expect(listShortenedUrlsByUserIdController.handle(mockRequest, mockReply)).rejects.toThrow('Test error');
+    await expect(
+      listShortenedUrlsByUserIdController.handle(mockRequest, mockReply),
+    ).rejects.toThrow('Test error');
     expect(mockListShortenedUrlsByUserIdUseCase.execute).toHaveBeenCalledWith({
       userId: 'user-123',
     });

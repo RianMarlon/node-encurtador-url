@@ -5,16 +5,10 @@ import { ListShortenedUrlsByUserIdUseCase } from '@/modules/url-shortener/applic
 
 export class ListShortenedUrlsByUserIdController {
   async handle(request: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
-    if (!request.user?.id) {
-      return reply.status(401).send({
-        errors: [{ message: 'Authentication required' }],
-      });
-    }
-
     const listShortenedUrlsByUserIdUseCase = container.resolve(ListShortenedUrlsByUserIdUseCase);
 
     const result = await listShortenedUrlsByUserIdUseCase.execute({
-      userId: request.user.id,
+      userId: request.user!.id,
     });
 
     return reply.status(200).send(result);

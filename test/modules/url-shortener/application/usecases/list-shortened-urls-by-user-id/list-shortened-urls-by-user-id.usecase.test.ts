@@ -22,6 +22,7 @@ describe('ListShortenedUrlsByUserIdUseCase', () => {
   const mockUrlShortenerRepository: jest.Mocked<UrlShortenerRepository> = {
     create: jest.fn(),
     findByUrlKey: jest.fn(),
+    findByUrlKeyAndUserId: jest.fn(),
     findByUserId: jest.fn(),
     update: jest.fn(),
   };
@@ -45,7 +46,6 @@ describe('ListShortenedUrlsByUserIdUseCase', () => {
   });
 
   it('should return a list of shortened URLs for a valid user', async () => {
-    // Arrange
     const mockUser = {
       id: userId,
       name: 'Test User',
@@ -74,10 +74,8 @@ describe('ListShortenedUrlsByUserIdUseCase', () => {
     mockUserRepository.findById.mockResolvedValueOnce(mockUser);
     mockUrlShortenerRepository.findByUserId.mockResolvedValueOnce(mockUrlShorteners);
 
-    // Act
     const result = await listShortenedUrlsByUserIdUseCase.execute({ userId });
 
-    // Assert
     expect(mockUserRepository.findById).toHaveBeenCalledWith(userId);
     expect(mockUrlShortenerRepository.findByUserId).toHaveBeenCalledWith(userId);
     expect(result.data).toHaveLength(2);
@@ -100,7 +98,6 @@ describe('ListShortenedUrlsByUserIdUseCase', () => {
   });
 
   it('should return an empty array when user has no URLs', async () => {
-    // Arrange
     const mockUser = {
       id: userId,
       name: 'Test User',
@@ -110,20 +107,16 @@ describe('ListShortenedUrlsByUserIdUseCase', () => {
     mockUserRepository.findById.mockResolvedValueOnce(mockUser);
     mockUrlShortenerRepository.findByUserId.mockResolvedValueOnce([]);
 
-    // Act
     const result = await listShortenedUrlsByUserIdUseCase.execute({ userId });
 
-    // Assert
     expect(mockUserRepository.findById).toHaveBeenCalledWith(userId);
     expect(mockUrlShortenerRepository.findByUserId).toHaveBeenCalledWith(userId);
     expect(result.data).toEqual([]);
   });
 
   it('should throw an UNAUTHORIZED error when user is not found', async () => {
-    // Arrange
     mockUserRepository.findById.mockResolvedValueOnce(null);
 
-    // Act & Assert
     await expect(listShortenedUrlsByUserIdUseCase.execute({ userId })).rejects.toThrow(
       NotificationError,
     );
@@ -142,7 +135,6 @@ describe('ListShortenedUrlsByUserIdUseCase', () => {
   });
 
   it('should throw an error if repository.findByUserId fails', async () => {
-    // Arrange
     const mockUser = {
       id: userId,
       name: 'Test User',
@@ -153,8 +145,9 @@ describe('ListShortenedUrlsByUserIdUseCase', () => {
     mockUserRepository.findById.mockResolvedValueOnce(mockUser);
     mockUrlShortenerRepository.findByUserId.mockRejectedValueOnce(new Error(errorMessage));
 
-    // Act & Assert
-    await expect(listShortenedUrlsByUserIdUseCase.execute({ userId })).rejects.toThrow(errorMessage);
+    await expect(listShortenedUrlsByUserIdUseCase.execute({ userId })).rejects.toThrow(
+      errorMessage,
+    );
     expect(mockUserRepository.findById).toHaveBeenCalledWith(userId);
     expect(mockUrlShortenerRepository.findByUserId).toHaveBeenCalledWith(userId);
   });
