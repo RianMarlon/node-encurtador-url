@@ -320,4 +320,62 @@ describe('UrlShortener', () => {
       }
     });
   });
+
+  describe('delete', () => {
+    it('should set deletedAt to current date', () => {
+      const urlShortener = new UrlShortener({ originalUrl: 'https://example.com' });
+      expect(urlShortener.deletedAt).toBeNull();
+
+      const mockDate = new Date('2025-03-01T00:00:00Z');
+      jest.spyOn(global, 'Date').mockImplementationOnce(() => mockDate as unknown as Date);
+
+      urlShortener.delete();
+
+      expect(urlShortener.deletedAt).toEqual(mockDate);
+    });
+
+    it('should update the updatedAt timestamp when deleting', () => {
+      const initialDate = new Date('2025-01-01T00:00:00Z');
+      const urlShortener = new UrlShortener({
+        originalUrl: 'https://example.com',
+        updatedAt: initialDate,
+      });
+
+      const mockDate = new Date('2025-03-01T00:00:00Z');
+      jest.spyOn(global, 'Date').mockImplementationOnce(() => mockDate as unknown as Date);
+
+      urlShortener.delete();
+
+      expect(urlShortener.updatedAt).toEqual(mockDate);
+      expect(urlShortener.updatedAt).not.toEqual(initialDate);
+    });
+
+    it('should set deletedAt and updatedAt to the same timestamp', () => {
+      const urlShortener = new UrlShortener({ originalUrl: 'https://example.com' });
+
+      const mockDate = new Date('2025-03-01T00:00:00Z');
+      jest.spyOn(global, 'Date').mockImplementationOnce(() => mockDate as unknown as Date);
+
+      urlShortener.delete();
+
+      expect(urlShortener.deletedAt).toEqual(urlShortener.updatedAt);
+    });
+  });
+
+  describe('constructor with deletedAt', () => {
+    it('should create entity with provided deletedAt', () => {
+      const deletedAt = new Date('2025-03-01T00:00:00Z');
+      const urlShortener = new UrlShortener({
+        originalUrl: 'https://example.com',
+        deletedAt,
+      });
+
+      expect(urlShortener.deletedAt).toEqual(deletedAt);
+    });
+
+    it('should set deletedAt to null when not provided', () => {
+      const urlShortener = new UrlShortener({ originalUrl: 'https://example.com' });
+      expect(urlShortener.deletedAt).toBeNull();
+    });
+  });
 });

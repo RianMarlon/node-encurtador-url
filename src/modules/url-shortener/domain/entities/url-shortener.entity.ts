@@ -10,6 +10,7 @@ interface UrlShortenerProps {
   clickCount?: number;
   createdAt?: Date;
   updatedAt?: Date;
+  deletedAt?: Date;
 }
 
 export class UrlShortener extends BaseEntity {
@@ -17,6 +18,7 @@ export class UrlShortener extends BaseEntity {
   private _shortUrl: string;
   private _originalUrl: string;
   private _clickCount: number;
+  private _deletedAt: Date | null;
 
   constructor(props: UrlShortenerProps) {
     super(props.id, props.createdAt, props.updatedAt);
@@ -25,6 +27,7 @@ export class UrlShortener extends BaseEntity {
     this._shortUrl = `${process.env.BASE_URL}/${this._urlKey}`;
     this._originalUrl = props.originalUrl;
     this._clickCount = props.clickCount || 0;
+    this._deletedAt = props.deletedAt || null;
   }
 
   private validate(props: UrlShortenerProps): void {
@@ -69,6 +72,10 @@ export class UrlShortener extends BaseEntity {
     return this._clickCount;
   }
 
+  get deletedAt(): Date | null {
+    return this._deletedAt;
+  }
+
   changeOriginalUrl(originalUrl: string): void {
     this.validate({ originalUrl });
     this._originalUrl = originalUrl;
@@ -78,5 +85,11 @@ export class UrlShortener extends BaseEntity {
 
   incrementClickCount(): void {
     this._clickCount++;
+  }
+
+  delete(): void {
+    const now = new Date();
+    this._deletedAt = now;
+    this.updatedAt = now;
   }
 }
