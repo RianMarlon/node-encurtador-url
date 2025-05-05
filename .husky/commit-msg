@@ -1,1 +1,10 @@
-pnpm exec  commitlint --edit "$1"
+echo "📝 Validating commit message..."
+pnpm exec commitlint --edit "$1"
+STATUS=$?
+
+if [ $STATUS -ne 0 ]; then
+  echo "❌ Commit message failed linting rules."
+  exit 1
+fi
+
+echo "✅ Commit message is valid."
