@@ -5,6 +5,7 @@ import { UrlShortener } from '@/modules/url-shortener/domain/entities/url-shorte
 import { UrlShortenerPrismaRepository } from '@/modules/url-shortener/infra/database/prisma/url-shortener-prisma.repository';
 
 const mockFindUnique = jest.fn();
+const mockFindMany = jest.fn();
 const mockCreate = jest.fn();
 const mockUpdate = jest.fn();
 
@@ -13,6 +14,7 @@ jest.mock('@prisma/client', () => {
     PrismaClient: jest.fn().mockImplementation(() => ({
       urlShortener: {
         findUnique: mockFindUnique,
+        findMany: mockFindMany,
         create: mockCreate,
         update: mockUpdate,
       },
@@ -66,6 +68,62 @@ describe('UrlShortenerPrismaRepository', () => {
       expect(result?.updatedAt).toBe(mockDate);
       expect(mockFindUnique).toHaveBeenCalledWith({
         where: { urlKey: 'abc123' },
+      });
+    });
+  });
+
+  describe('findByUserId', () => {
+    it('should return an empty array when no URLs are found for the user', async () => {
+      mockFindMany.mockResolvedValue([]);
+
+      const result = await repository.findByUserId('user-123');
+
+      expect(result).toEqual([]);
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: { userId: 'user-123' },
+        orderBy: { createdAt: 'desc' },
+      });
+    });
+
+    it('should return an array of UrlShortener entities when URLs are found for the user', async () => {
+      const mockDate = new Date();
+      const mockUrlShortenerDataList = [
+        {
+          id: 'test-id-1',
+          urlKey: 'abc123',
+          originalUrl: 'https://example.com/1',
+          clickCount: 5,
+          createdAt: mockDate,
+          updatedAt: mockDate,
+        },
+        {
+          id: 'test-id-2',
+          urlKey: 'def456',
+          originalUrl: 'https://example.com/2',
+          clickCount: 10,
+          createdAt: mockDate,
+          updatedAt: mockDate,
+        },
+      ];
+
+      mockFindMany.mockResolvedValue(mockUrlShortenerDataList);
+
+      const result = await repository.findByUserId('user-123');
+
+      expect(result).toHaveLength(2);
+      expect(result[0]).toBeInstanceOf(UrlShortener);
+      expect(result[0].id).toBe('test-id-1');
+      expect(result[0].urlKey).toBe('abc123');
+      expect(result[0].originalUrl).toBe('https://example.com/1');
+      expect(result[0].clickCount).toBe(5);
+      expect(result[1]).toBeInstanceOf(UrlShortener);
+      expect(result[1].id).toBe('test-id-2');
+      expect(result[1].urlKey).toBe('def456');
+      expect(result[1].originalUrl).toBe('https://example.com/2');
+      expect(result[1].clickCount).toBe(10);
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: { userId: 'user-123' },
+        orderBy: { createdAt: 'desc' },
       });
     });
   });

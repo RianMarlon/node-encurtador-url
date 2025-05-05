@@ -11,6 +11,29 @@ export class UrlShortenerPrismaRepository implements UrlShortenerRepository {
     private readonly prisma: PrismaClient,
   ) {}
 
+  async findByUserId(userId: string): Promise<UrlShortener[]> {
+    const urlShortenerDataList = await this.prisma.urlShortener.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return urlShortenerDataList.map(
+      (urlShortenerData) =>
+        new UrlShortener({
+          id: urlShortenerData.id,
+          urlKey: urlShortenerData.urlKey,
+          originalUrl: urlShortenerData.originalUrl,
+          clickCount: urlShortenerData.clickCount,
+          createdAt: urlShortenerData.createdAt,
+          updatedAt: urlShortenerData.updatedAt,
+        }),
+    );
+  }
+
   async findByUrlKey(urlKey: string): Promise<UrlShortener | null> {
     const urlShortenerData = await this.prisma.urlShortener.findUnique({
       where: {
