@@ -6,6 +6,7 @@ import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositor
 import { UrlShortenerPrismaRepository } from '@/modules/url-shortener/infra/database/prisma/url-shortener-prisma.repository';
 import { CreateShortUrlUseCase } from '@/modules/url-shortener/application/usecases/create-short-url/create-short-url.usecase';
 import { ResolveShortUrlUseCase } from '@/modules/url-shortener/application/usecases/resolve-short-url/resolve-short-url.usecase';
+import { ListShortenedUrlsByUserIdUseCase } from '@/modules/url-shortener/application/usecases/list-shortened-urls-by-user-id/list-shortened-urls-by-user-id.usecase';
 import { BcryptHashProvider } from '@/shared/providers/hash/implementations/bcrypt-hash-provider';
 import { HashProvider } from '@/shared/providers/hash/interfaces/hash-provider.interface';
 import { UserRepository } from '@/modules/user/domain/repositories/user.repository';
@@ -29,6 +30,7 @@ container.registerSingleton<UserRepository>('UserRepository', UserPrismaReposito
 
 container.registerSingleton(CreateShortUrlUseCase);
 container.registerSingleton(ResolveShortUrlUseCase);
+container.registerSingleton(ListShortenedUrlsByUserIdUseCase);
 container.registerSingleton(CreateUserUseCase);
 container.registerSingleton(LoginUseCase);
 
