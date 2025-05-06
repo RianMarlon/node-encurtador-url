@@ -68,5 +68,8 @@
     "uuid": "^11.1.0",
     "yup": "^1.6.1"
   },
-  "packageManager": "pnpm@10.10.0"
+  "packageManager": "pnpm@10.10.0",
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": "eslint --fix"
+  }
 }
