@@ -1,8 +1,8 @@
 echo "📦 Stashing unstaged changes..."
-git stash push --keep-index --include-untracked -q
+git stash push --include-untracked -q
 STASHED=$?
 
-trap 'if [ $STASHED -eq 0 ]; then echo "🔄 Restoring unstaged changes..."; git stash pop --index -q || echo "⚠️ Failed to restore stash. Please check manually."; fi' EXIT
+trap 'if [ $STASHED -eq 0 ]; then echo "🔄 Restoring unstaged changes..."; git stash pop -q || echo "⚠️ Failed to restore stash. Please check manually."; fi' EXIT
 
 echo "🧪 Running full test suite via pnpm script..."
 pnpm test
