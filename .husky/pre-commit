@@ -1,0 +1,10 @@
+echo "🔍 Running lint..."
+pnpm lint-staged
+LINT_STATUS=$?
+
+if [ $LINT_STATUS -ne 0 ]; then
+  echo "❌ Commit blocked: lint or tests failed"
+  exit 1
+fi
+
+echo "✅ Lint passed. Proceeding with commit..."

@@ -1,4 +1,3 @@
-#!/bin/sh
 echo "🧪 Running tests..."
 pnpm test --lastCommit
 TEST_STATUS=$?
