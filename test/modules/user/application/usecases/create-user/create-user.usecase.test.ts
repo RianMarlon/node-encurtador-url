@@ -6,11 +6,13 @@ import { UserRepository } from '@/modules/user/domain/repositories/user.reposito
 import { HashProvider } from '@/shared/providers/hash/interfaces/hash-provider.interface';
 import { User } from '@/modules/user/domain/entities/user.entity';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import { PasswordStrengthSpecification } from '@/modules/user/domain/specifications/password-strength.specification';
 
 describe('CreateUserUseCase', () => {
   let createUserUseCase: CreateUserUseCase;
   let mockUserRepository: jest.Mocked<UserRepository>;
   let mockHashProvider: jest.Mocked<HashProvider>;
+  let mockPasswordStrengthSpec: jest.Mocked<PasswordStrengthSpecification>;
 
   const mockUser = {
     id: 'mock-user-id',
@@ -24,7 +26,7 @@ describe('CreateUserUseCase', () => {
   const mockInputData: CreateUserUseCaseInputDTO = {
     name: 'John Doe',
     email: 'John@Example.com',
-    password: 'password123',
+    password: 'Password123!',
   };
 
   beforeEach(() => {
@@ -33,6 +35,7 @@ describe('CreateUserUseCase', () => {
     mockUserRepository = {
       findByEmail: jest.fn(),
       create: jest.fn(),
+      findById: jest.fn(),
     } as unknown as jest.Mocked<UserRepository>;
 
     mockHashProvider = {
@@ -40,7 +43,16 @@ describe('CreateUserUseCase', () => {
       compare: jest.fn(),
     } as unknown as jest.Mocked<HashProvider>;
 
-    createUserUseCase = new CreateUserUseCase(mockUserRepository, mockHashProvider);
+    mockPasswordStrengthSpec = {
+      isSatisfiedBy: jest.fn(),
+      validate: jest.fn(),
+    } as unknown as jest.Mocked<PasswordStrengthSpecification>;
+
+    createUserUseCase = new CreateUserUseCase(
+      mockUserRepository,
+      mockHashProvider,
+      mockPasswordStrengthSpec,
+    );
 
     jest.spyOn(User.prototype, 'id', 'get').mockReturnValue(mockUser.id);
     jest.spyOn(User.prototype, 'name', 'get').mockReturnValue(mockUser.name);
@@ -54,11 +66,13 @@ describe('CreateUserUseCase', () => {
 
   it('should create a new user successfully', async () => {
     mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+    mockPasswordStrengthSpec.validate.mockImplementationOnce(() => {});
     mockHashProvider.hash.mockResolvedValueOnce('hashed_password');
 
     const result = await createUserUseCase.execute(mockInputData);
 
     expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('john@example.com');
+    expect(mockPasswordStrengthSpec.validate).toHaveBeenCalledWith(mockInputData.password);
     expect(mockHashProvider.hash).toHaveBeenCalledWith(mockInputData.password);
     expect(mockUserRepository.create).toHaveBeenCalledTimes(1);
 
@@ -76,18 +90,20 @@ describe('CreateUserUseCase', () => {
     await expect(createUserUseCase.execute(mockInputData)).rejects.toThrow(NotificationError);
 
     expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('john@example.com');
+    expect(mockPasswordStrengthSpec.validate).not.toHaveBeenCalled();
     expect(mockHashProvider.hash).not.toHaveBeenCalled();
     expect(mockUserRepository.create).not.toHaveBeenCalled();
   });
 
   it('should convert email to lowercase before checking if user exists', async () => {
     mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+    mockPasswordStrengthSpec.validate.mockImplementationOnce(() => {});
     mockHashProvider.hash.mockResolvedValueOnce('hashed_password');
 
     const inputWithMixedCaseEmail: CreateUserUseCaseInputDTO = {
       name: 'John Doe',
       email: 'JOHN@EXAMPLE.COM',
-      password: 'password123',
+      password: 'Password123!',
     };
 
     await createUserUseCase.execute(inputWithMixedCaseEmail);
@@ -97,16 +113,19 @@ describe('CreateUserUseCase', () => {
 
   it('should hash the password before creating the user', async () => {
     mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+    mockPasswordStrengthSpec.validate.mockImplementationOnce(() => {});
     mockHashProvider.hash.mockResolvedValueOnce('hashed_password');
 
     await createUserUseCase.execute(mockInputData);
 
+    expect(mockPasswordStrengthSpec.validate).toHaveBeenCalledWith(mockInputData.password);
     expect(mockHashProvider.hash).toHaveBeenCalledWith(mockInputData.password);
     expect(mockUserRepository.create).toHaveBeenCalledTimes(1);
   });
 
   it('should handle null email gracefully', async () => {
     mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+    mockPasswordStrengthSpec.validate.mockImplementationOnce(() => {});
     mockHashProvider.hash.mockResolvedValueOnce('hashed_password');
 
     const inputWithNullEmail = {
@@ -120,6 +139,7 @@ describe('CreateUserUseCase', () => {
 
   it('should propagate errors from userRepository.create', async () => {
     mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+    mockPasswordStrengthSpec.validate.mockImplementationOnce(() => {});
     mockHashProvider.hash.mockResolvedValueOnce('hashed_password');
 
     const mockError = new Error('Database error');
@@ -128,12 +148,14 @@ describe('CreateUserUseCase', () => {
     await expect(createUserUseCase.execute(mockInputData)).rejects.toThrow('Database error');
 
     expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('john@example.com');
+    expect(mockPasswordStrengthSpec.validate).toHaveBeenCalledWith(mockInputData.password);
     expect(mockHashProvider.hash).toHaveBeenCalledWith(mockInputData.password);
     expect(mockUserRepository.create).toHaveBeenCalledTimes(1);
   });
 
   it('should propagate errors from hashProvider.hash', async () => {
     mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+    mockPasswordStrengthSpec.validate.mockImplementationOnce(() => {});
 
     const mockError = new Error('Hash error');
     mockHashProvider.hash.mockRejectedValueOnce(mockError);
@@ -141,6 +163,7 @@ describe('CreateUserUseCase', () => {
     await expect(createUserUseCase.execute(mockInputData)).rejects.toThrow('Hash error');
 
     expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('john@example.com');
+    expect(mockPasswordStrengthSpec.validate).toHaveBeenCalledWith(mockInputData.password);
     expect(mockHashProvider.hash).toHaveBeenCalledWith(mockInputData.password);
     expect(mockUserRepository.create).not.toHaveBeenCalled();
   });
@@ -162,5 +185,40 @@ describe('CreateUserUseCase', () => {
       expect(errors[0].message).toBe('User already exists');
       expect(errors[0].code).toBe('BAD_REQUEST');
     }
+  });
+
+  it('should validate password strength before hashing', async () => {
+    mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+    mockPasswordStrengthSpec.validate.mockImplementationOnce(() => {});
+    mockHashProvider.hash.mockResolvedValueOnce('hashed_password');
+
+    await createUserUseCase.execute(mockInputData);
+
+    // Verify the order of operations
+    expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('john@example.com');
+
+    const validateCallOrder = mockPasswordStrengthSpec.validate.mock.invocationCallOrder[0];
+    const hashCallOrder = mockHashProvider.hash.mock.invocationCallOrder[0];
+
+    expect(validateCallOrder).toBeLessThan(hashCallOrder);
+  });
+
+  it('should not attempt to hash password if validation fails', async () => {
+    mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+
+    mockPasswordStrengthSpec.validate.mockImplementation(() => {
+      throw new NotificationError([
+        {
+          message: 'Password validation failed',
+          code: 'BAD_REQUEST',
+        },
+      ]);
+    });
+
+    await expect(createUserUseCase.execute(mockInputData)).rejects.toThrow(NotificationError);
+
+    expect(mockPasswordStrengthSpec.validate).toHaveBeenCalledWith(mockInputData.password);
+    expect(mockHashProvider.hash).not.toHaveBeenCalled();
+    expect(mockUserRepository.create).not.toHaveBeenCalled();
   });
 });

@@ -5,6 +5,7 @@ import { CreateUserUseCaseOutputDTO } from './dto/create-user-usecase-output.dto
 import { UserRepository } from '@/modules/user/domain/repositories/user.repository';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 import { User } from '@/modules/user/domain/entities/user.entity';
+import { PasswordStrengthSpecification } from '@/modules/user/domain/specifications/password-strength.specification';
 
 @injectable()
 export class CreateUserUseCase {
@@ -13,6 +14,8 @@ export class CreateUserUseCase {
     private readonly userRepository: UserRepository,
     @inject('HashProvider')
     private readonly hashProvider: HashProvider,
+    @inject('PasswordStrengthSpecification')
+    private readonly passwordStrengthSpec: PasswordStrengthSpecification,
   ) {}
 
   async execute(data: CreateUserUseCaseInputDTO): Promise<CreateUserUseCaseOutputDTO> {
@@ -26,6 +29,7 @@ export class CreateUserUseCase {
       ]);
     }
 
+    this.passwordStrengthSpec.validate(data.password);
     const passwordHashed = await this.hashProvider.hash(data.password);
     const user = new User({
       name: data.name,
