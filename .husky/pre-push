@@ -1,10 +1,17 @@
-echo "🧪 Running tests..."
-pnpm test --lastCommit
+echo "📦 Stashing unstaged changes..."
+git stash push --keep-index --include-untracked -q
+STASHED=$?
+
+trap 'if [ $STASHED -eq 0 ]; then echo "🔄 Restoring unstaged changes..."; git stash pop --index -q || echo "⚠️ Failed to restore stash. Please check manually."; fi' EXIT
+
+echo "🧪 Running full test suite via pnpm script..."
+pnpm test
 TEST_STATUS=$?
 
-if [ $TEST_STATUS -ne 0 ]; then
-  echo "❌ Push blocked: tests failed"
-  exit 1
+if [ $TEST_STATUS -eq 0 ]; then
+  echo "✅ All tests passed. Push will proceed."
+else
+  echo "❌ Tests failed. Push blocked."
 fi
 
-echo "✅ Tests passed. Proceeding with push..."
+exit $TEST_STATUS
