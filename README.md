@@ -4,8 +4,12 @@ Um serviço de encurtamento de URLs desenvolvido com TypeScript, Fastify e Prism
 
 ## Funcionalidades
 
-- Criação de URLs encurtadas
+- Cadastro e login de usuários com autenticação JWT
+- Criação de URLs encurtadas (disponível para usuários autenticados ou não)
 - Redirecionamento de URLs encurtadas para URLs originais
+- Atualização da URL original (restrita ao usuário autenticado criador da URL)
+- Deleção de URLs encurtadas com soft delete (restrita ao usuário autenticado criador da URL)
+- Listagem de URLs criadas por um usuário autenticado
 
 ## Tecnologias Utilizadas
 
