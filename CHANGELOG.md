@@ -5,6 +5,18 @@ Todas as alterações importantes neste projeto serão documentadas neste arquiv
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.4.0] - 05/05/2025
+
+### Alterações
+- Adicionada funcionalidade de deleção de URL encurtada (soft delete)
+  - Endpoint para deletar URLs encurtadas, mantendo o registro (soft delete)
+- Ajustadas consultas para não retornar URLs deletadas
+  - Consultas agora ignoram URLs marcadas como deletadas (soft delete)
+- Adicionada validação de força de senha
+  - Requisitos de complexidade para senhas durante o cadastro de usuários
+
+[1.4.0]: https://github.com/RianMarlon/node-encurtador-url/releases/tag/v1.4.0
+
 ## [1.3.0] - 05/05/2025
 
 ### Alterações
