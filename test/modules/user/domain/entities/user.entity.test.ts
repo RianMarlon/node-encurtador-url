@@ -171,7 +171,7 @@ describe('User', () => {
     });
 
     it('should throw NotificationError when name exceeds maximum length', () => {
-      const longName = 'a'.repeat(101); // 101 characters
+      const longName = 'a'.repeat(101);
       expect(() => {
         new User({ name: longName, email: 'john@example.com', password: 'password123' });
       }).toThrow(NotificationError);

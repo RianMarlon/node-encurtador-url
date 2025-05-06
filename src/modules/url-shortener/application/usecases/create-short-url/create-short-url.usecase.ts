@@ -35,6 +35,7 @@ export class CreateShortUrlUseCase {
     await this.urlShortenerRepository.create(urlShortner, data.userId);
 
     return {
+      urlKey: urlShortner.urlKey,
       shortUrl: urlShortner.shortUrl,
       originalUrl: urlShortner.originalUrl,
     };

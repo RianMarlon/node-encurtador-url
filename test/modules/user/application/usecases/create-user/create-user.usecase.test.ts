@@ -42,7 +42,6 @@ describe('CreateUserUseCase', () => {
 
     createUserUseCase = new CreateUserUseCase(mockUserRepository, mockHashProvider);
 
-    // Mock User constructor
     jest.spyOn(User.prototype, 'id', 'get').mockReturnValue(mockUser.id);
     jest.spyOn(User.prototype, 'name', 'get').mockReturnValue(mockUser.name);
     jest.spyOn(User.prototype, 'email', 'get').mockReturnValue(mockUser.email);

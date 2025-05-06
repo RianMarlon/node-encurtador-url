@@ -37,7 +37,6 @@ describe('ListShortenedUrlsByUserIdController', () => {
   });
 
   it('should return 200 status code with user URLs', async () => {
-    // Arrange
     const mockDate = new Date();
     const mockResult = {
       data: [
@@ -62,10 +61,8 @@ describe('ListShortenedUrlsByUserIdController', () => {
 
     mockListShortenedUrlsByUserIdUseCase.execute.mockResolvedValueOnce(mockResult);
 
-    // Act
     await listShortenedUrlsByUserIdController.handle(mockRequest, mockReply);
 
-    // Assert
     expect(container.resolve).toHaveBeenCalledWith(ListShortenedUrlsByUserIdUseCase);
     expect(mockListShortenedUrlsByUserIdUseCase.execute).toHaveBeenCalledWith({
       userId: 'user-123',
@@ -75,12 +72,10 @@ describe('ListShortenedUrlsByUserIdController', () => {
   });
 
   it('should throw error when user is not authenticated', async () => {
-    // Arrange
     const unauthenticatedRequest = {
       user: undefined,
     } as unknown as FastifyRequest;
 
-    // Act & Assert
     await expect(
       listShortenedUrlsByUserIdController.handle(unauthenticatedRequest, mockReply),
     ).rejects.toThrow();
@@ -88,11 +83,9 @@ describe('ListShortenedUrlsByUserIdController', () => {
   });
 
   it('should propagate errors from the use case', async () => {
-    // Arrange
     const mockError = new Error('Test error');
     mockListShortenedUrlsByUserIdUseCase.execute.mockRejectedValueOnce(mockError);
 
-    // Act & Assert
     await expect(
       listShortenedUrlsByUserIdController.handle(mockRequest, mockReply),
     ).rejects.toThrow('Test error');
