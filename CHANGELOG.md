@@ -30,8 +30,8 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - Adicionado cadastro de usuário e login
   - Endpoint para registrar um novo usuário
   - Endpoint para realizar login e gerar um token JWT
-- Implementada autenticação com JWT
-- Implementado hash para senhas de usuários
+- Implementada geração de token JWT
+- Implementado geração de hash para senhas de usuários
 
 [1.1.0]: https://github.com/RianMarlon/node-encurtador-url/releases/tag/v1.1.0
 
