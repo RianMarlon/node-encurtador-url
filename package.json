@@ -9,7 +9,6 @@
     "dev": "nodemon --exec node -r @swc-node/register -r tsconfig-paths/register src/shared/infra/http/fastify/server.ts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "prisma:generate": "prisma generate",
