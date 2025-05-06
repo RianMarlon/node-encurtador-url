@@ -1,8 +1,12 @@
 echo "📦 Stashing unstaged changes..."
 git stash push --include-untracked -q
-STASHED=$?
+STASH_CREATED=$?
+STASH_EMPTY=$(git stash list | wc -l)
 
-trap 'if [ $STASHED -eq 0 ]; then echo "🔄 Restoring unstaged changes..."; git stash pop -q || echo "⚠️ Failed to restore stash. Please check manually."; fi' EXIT
+trap 'if [ $STASH_CREATED -eq 0 ] && [ $STASH_EMPTY -gt 0 ]; then
+  echo "🔄 Restoring unstaged changes...";
+  git stash pop -q || echo "⚠️ Failed to restore stash. Please check manually.";
+fi' EXIT
 
 echo "🧪 Running full test suite via pnpm script..."
 pnpm test
