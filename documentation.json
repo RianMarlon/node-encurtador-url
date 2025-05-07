@@ -207,6 +207,16 @@
               }
             }
           },
+          "400": {
+            "description": "Bad request - validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginValidationError"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized - invalid credentials",
             "content": {
@@ -1058,6 +1068,35 @@
           "errors": [
             {
               "message": "Invalid email or password"
+            }
+          ]
+        }
+      },
+      "LoginValidationError": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Error message"
+                },
+                "field": {
+                  "type": "string",
+                  "description": "Field with error"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "errors": [
+            {
+              "message": "Email must be a valid email",
+              "field": "email"
             }
           ]
         }
