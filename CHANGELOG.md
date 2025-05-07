@@ -5,6 +5,14 @@ Todas as alterações importantes neste projeto serão documentadas neste arquiv
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.5.1] - 07/05/2025
+
+### Correções
+- Adicionada validação dos dados de entrada no fluxo de login
+- Corrigido o fluxo de criação de usuário para validar os dados antes de verificar se já existe um usuário com o e-mail
+
+[1.5.1]: https://github.com/RianMarlon/node-encurtador-url/releases/tag/v1.5.1
+
 ## [1.5.0] - 06/05/2025
 
 ### Alterações
