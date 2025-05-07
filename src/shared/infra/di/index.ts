@@ -18,6 +18,8 @@ import { JwtProvider } from '@/shared/providers/jwt/interfaces/jwt-provider.inte
 import { PasswordStrengthSpecification } from '@/modules/user/domain/specifications/password-strength.specification';
 import { DeleteShortUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/delete-short-url-by-url-key/delete-short-url-by-url-key.usecase';
 import { UpdateOriginalUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/update-original-url-by-url-key/update-original-url-by-url-key.usecase';
+import { LoginValidator } from '@/modules/auth/domain/validators/login-validator';
+import { LoginYupValidator } from '@/modules/auth/infra/validators/yup/login-yup.validator';
 
 const prismaClient = new PrismaClient();
 container.registerInstance('PrismaClient', prismaClient);
@@ -30,6 +32,10 @@ container.registerSingleton<UrlShortenerRepository>(
 );
 
 container.registerSingleton<UserRepository>('UserRepository', UserPrismaRepository);
+
+container.register<LoginValidator>('LoginValidator', {
+  useClass: LoginYupValidator,
+});
 
 container.registerSingleton(CreateShortUrlUseCase);
 container.registerSingleton(ResolveShortUrlUseCase);
