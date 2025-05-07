@@ -19,6 +19,14 @@ export class CreateUserUseCase {
   ) {}
 
   async execute(data: CreateUserUseCaseInputDTO): Promise<CreateUserUseCaseOutputDTO> {
+    this.passwordStrengthSpec.validate(data.password);
+    const passwordHashed = await this.hashProvider.hash(data.password);
+    const user = new User({
+      name: data.name,
+      email: data.email,
+      password: passwordHashed,
+    });
+
     const userAlreadyExists = await this.userRepository.findByEmail(data.email?.toLowerCase());
     if (userAlreadyExists) {
       throw new NotificationError([
@@ -28,14 +36,6 @@ export class CreateUserUseCase {
         },
       ]);
     }
-
-    this.passwordStrengthSpec.validate(data.password);
-    const passwordHashed = await this.hashProvider.hash(data.password);
-    const user = new User({
-      name: data.name,
-      email: data.email?.toLowerCase(),
-      password: passwordHashed,
-    });
 
     await this.userRepository.create(user);
     return {

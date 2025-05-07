@@ -20,7 +20,7 @@ export class User extends BaseEntity {
     super(props.id, props.createdAt, props.updatedAt);
     this.validate(props);
     this._name = props.name;
-    this._email = props.email;
+    this._email = props.email.toLowerCase();
     this._password = props.password;
   }
 
