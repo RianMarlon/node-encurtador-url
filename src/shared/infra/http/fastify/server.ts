@@ -1,8 +1,12 @@
 import 'reflect-metadata';
 import { container } from '@/shared/infra/di';
+import { join } from 'path';
+import { readFileSync } from 'fs';
 
 import fastify from 'fastify';
 import cors from '@fastify/cors';
+import swagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
 
 import { urlShortenerRoutes } from '@/modules/url-shortener/infra/http/fastify/url-shortener.routes';
 import { userRoutes } from '@/modules/user/infra/http/fastify/user.routes';
@@ -12,6 +16,36 @@ import { authRoutes } from '@/modules/auth/infra/http/fastify/routes/auth.routes
 
 export const app = fastify({
   logger: true,
+});
+
+// Load OpenAPI documentation from file
+const documentationPath = join(process.cwd(), 'documentation.json');
+const swaggerDocument = JSON.parse(readFileSync(documentationPath, 'utf8'));
+
+// Register Swagger with OpenAPI document
+app.register(swagger, {
+  mode: 'static',
+  specification: {
+    document: swaggerDocument,
+  },
+});
+
+// Register Swagger UI
+app.register(swaggerUi, {
+  routePrefix: '/docs',
+  uiConfig: {
+    docExpansion: 'list',
+    deepLinking: true,
+  },
+  uiHooks: {
+    onRequest: function (request, reply, next) {
+      next();
+    },
+    preHandler: function (request, reply, next) {
+      next();
+    },
+  },
+  staticCSP: true,
 });
 
 app.register(cors, {
@@ -48,15 +82,16 @@ app.setErrorHandler((error, request, reply) => {
   reply.status(500).send({ errors: [{ message: 'Internal Server Error' }] });
 });
 
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 const start = async () => {
   try {
     const prismaClient = container.resolve<PrismaClient>('PrismaClient');
     await prismaClient.$connect();
 
-    await app.listen({ port: PORT, host: '0.0.0.0' });
-    console.log(`Server is running on port ${PORT}`);
+    await app.listen({ port, host: '0.0.0.0' });
+    console.log(`Server is running on port ${port}`);
+    console.log(`Swagger documentation available at http://localhost:${port}/docs`);
   } catch (err) {
     app.log.error(err);
     process.exit(1);
