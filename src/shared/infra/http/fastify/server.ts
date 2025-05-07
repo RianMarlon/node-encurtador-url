@@ -45,7 +45,7 @@ app.setErrorHandler((error, request, reply) => {
   }
 
   app.log.error(error);
-  reply.status(500).send({ error: error.message });
+  reply.status(500).send({ errors: [{ message: 'Internal Server Error' }] });
 });
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
