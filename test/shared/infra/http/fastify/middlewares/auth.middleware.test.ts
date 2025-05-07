@@ -38,10 +38,12 @@ describe('AuthMiddleware', () => {
     it('should do nothing when authorization header is not provided', async () => {
       mockRequest.headers = {};
 
-      await authMiddleware.optionalAuth(mockRequest);
+      await authMiddleware.optionalAuth(mockRequest, mockReply);
 
       expect(mockJwtProvider.verify).not.toHaveBeenCalled();
       expect(mockRequest.user).toBeUndefined();
+      expect(mockReply.status).not.toHaveBeenCalled();
+      expect(mockReply.send).not.toHaveBeenCalled();
     });
 
     it('should set user ID in request when token is valid', async () => {
@@ -56,22 +58,28 @@ describe('AuthMiddleware', () => {
         email: 'test@example.com',
       });
 
-      await authMiddleware.optionalAuth(mockRequest);
+      await authMiddleware.optionalAuth(mockRequest, mockReply);
 
       expect(mockJwtProvider.verify).toHaveBeenCalledWith('valid-token');
       expect(mockRequest.user).toEqual({ id: userId });
+      expect(mockReply.status).not.toHaveBeenCalled();
+      expect(mockReply.send).not.toHaveBeenCalled();
     });
 
-    it('should not set user ID when token is invalid', async () => {
+    it('should return 401 when token is invalid', async () => {
       mockRequest.headers = {
         authorization: 'Bearer invalid-token',
       };
 
       mockJwtProvider.verify.mockRejectedValueOnce(new Error('Invalid token'));
 
-      await authMiddleware.optionalAuth(mockRequest);
+      await authMiddleware.optionalAuth(mockRequest, mockReply);
 
       expect(mockJwtProvider.verify).toHaveBeenCalledWith('invalid-token');
+      expect(mockReply.status).toHaveBeenCalledWith(401);
+      expect(mockReply.send).toHaveBeenCalledWith({
+        errors: [{ message: 'Invalid token' }],
+      });
       expect(mockRequest.user).toBeUndefined();
     });
 
@@ -80,9 +88,11 @@ describe('AuthMiddleware', () => {
         authorization: 'malformed-header',
       };
 
-      await authMiddleware.optionalAuth(mockRequest);
+      await authMiddleware.optionalAuth(mockRequest, mockReply);
 
-      expect(mockJwtProvider.verify).toHaveBeenCalledWith(undefined);
+      expect(mockJwtProvider.verify).not.toHaveBeenCalled();
+      expect(mockReply.status).not.toHaveBeenCalled();
+      expect(mockReply.send).not.toHaveBeenCalled();
     });
   });
 
@@ -142,14 +152,12 @@ describe('AuthMiddleware', () => {
         authorization: 'malformed-header',
       };
 
-      mockJwtProvider.verify.mockRejectedValueOnce(new Error('Invalid token'));
-
       await authMiddleware.requireAuth(mockRequest, mockReply);
 
-      expect(mockJwtProvider.verify).toHaveBeenCalledWith(undefined);
+      expect(mockJwtProvider.verify).not.toHaveBeenCalled();
       expect(mockReply.status).toHaveBeenCalledWith(401);
       expect(mockReply.send).toHaveBeenCalledWith({
-        errors: [{ message: 'Invalid token' }],
+        errors: [{ message: 'Token not provided' }],
       });
     });
   });
