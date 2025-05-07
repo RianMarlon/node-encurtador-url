@@ -22,6 +22,7 @@ Um serviço de encurtamento de URLs desenvolvido com TypeScript, Fastify e Prism
 - Docker & Docker Compose
 - PNPM
 - Husky
+- Swagger (documentação da API com @fastify/swagger e @fastify/swagger-ui)
 
 ## Requisitos
 
@@ -66,6 +67,20 @@ docker compose up -d
 ```bash
 docker compose down
 ```
+
+## Documentação da API
+
+A documentação da API foi gerada utilizando as bibliotecas **`@fastify/swagger`** e **`@fastify/swagger-ui`**, seguindo a especificação **OpenAPI 3.0.0**. Ela fornece uma interface interativa para explorar e testar os endpoints da aplicação.
+
+### Acessando a Documentação
+
+Após iniciar a aplicação, você pode acessar a documentação da API na seguinte URL:
+```bash
+http://localhost:3000/docs
+```
+
+A documentação informa todos os endpoints da API, incluindo detalhes sobre os parâmetros, respostas, e possíveis erros.
+
 
 ## Desenvolvimento
 
