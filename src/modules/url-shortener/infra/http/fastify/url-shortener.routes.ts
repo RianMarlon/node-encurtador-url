@@ -18,7 +18,7 @@ export async function urlShortenerRoutes(app: FastifyInstance): Promise<void> {
   app.post(
     '/urls',
     {
-      preHandler: (request) => authMiddleware.optionalAuth(request),
+      preHandler: (request, reply) => authMiddleware.optionalAuth(request, reply),
     },
     (request, reply) => createShortUrlController.handle(request, reply),
   );
