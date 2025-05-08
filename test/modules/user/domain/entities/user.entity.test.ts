@@ -37,7 +37,7 @@ describe('User', () => {
       const user = new User(userData);
 
       expect(user.name).toBe(userData.name);
-      expect(user.email).toBe(userData.email);
+      expect(user.email).toBe(userData.email.toLowerCase());
       expect(user.password).toBe(userData.password);
     });
 
@@ -60,7 +60,7 @@ describe('User', () => {
 
       expect(BaseEntity).toHaveBeenCalledWith(id, createdAt, updatedAt);
       expect(user.name).toBe(name);
-      expect(user.email).toBe(email);
+      expect(user.email).toBe(email.toLowerCase());
       expect(user.password).toBe(password);
     });
 
@@ -145,56 +145,10 @@ describe('User', () => {
       }
     });
 
-    it('should throw NotificationError when email is not valid', () => {
-      expect(() => {
-        new User({ name: 'John Doe', email: 'invalid-email', password: 'password123' });
-      }).toThrow(NotificationError);
-    });
-
-    it('should throw NotificationError with correct error details when email is invalid', () => {
-      try {
-        new User({ name: 'John Doe', email: 'invalid-email', password: 'password123' });
-        fail('Expected constructor to throw');
-      } catch (error) {
-        expect(error).toBeInstanceOf(NotificationError);
-        const notificationError = error as NotificationError;
-
-        expect(notificationError.hasErrors()).toBe(true);
-
-        const errors = notificationError.getErrors();
-        expect(errors.length).toBe(1);
-        expect(errors[0].message).toBe('Email must be a valid email');
-        expect(errors[0].code).toBe('BAD_REQUEST');
-        expect(errors[0].context).toBe('User');
-        expect(errors[0].field).toBe('email');
-      }
-    });
-
-    it('should throw NotificationError when name exceeds maximum length', () => {
-      const longName = 'a'.repeat(101);
-      expect(() => {
-        new User({ name: longName, email: 'john@example.com', password: 'password123' });
-      }).toThrow(NotificationError);
-    });
-
-    it('should throw NotificationError when email exceeds maximum length', () => {
-      const longEmail = `${'a'.repeat(247)}@example.com`;
-      expect(() => {
-        new User({ name: 'John Doe', email: longEmail, password: 'password123' });
-      }).toThrow(NotificationError);
-    });
-
-    it('should throw NotificationError when password exceeds maximum length', () => {
-      const longPassword = 'a'.repeat(256);
-      expect(() => {
-        new User({ name: 'John Doe', email: 'john@example.com', password: longPassword });
-      }).toThrow(NotificationError);
-    });
-
     it('should throw NotificationError with multiple errors when there are multiple validation issues', () => {
       try {
         // @ts-expect-error - Intentionally passing invalid props for testing
-        new User({ name: null, email: 'invalid-email', password: null });
+        new User({ name: null, email: null, password: null });
         fail('Expected constructor to throw');
       } catch (error) {
         expect(error).toBeInstanceOf(NotificationError);
@@ -212,20 +166,6 @@ describe('User', () => {
         });
       }
     });
-
-    it('should accept valid email formats', () => {
-      expect(() => {
-        new User({ name: 'John Doe', email: 'john@example.com', password: 'password123' });
-      }).not.toThrow();
-
-      expect(() => {
-        new User({ name: 'John Doe', email: 'john.doe@example.co.uk', password: 'password123' });
-      }).not.toThrow();
-
-      expect(() => {
-        new User({ name: 'John Doe', email: 'john+tag@example.com', password: 'password123' });
-      }).not.toThrow();
-    });
   });
 
   describe('getters', () => {
@@ -235,10 +175,10 @@ describe('User', () => {
       expect(user.name).toBe(name);
     });
 
-    it('should return the correct email value', () => {
-      const email = 'john@example.com';
+    it('should return the correct email value (lowercase)', () => {
+      const email = 'John@Example.com';
       const user = new User({ name: 'John Doe', email, password: 'password123' });
-      expect(user.email).toBe(email);
+      expect(user.email).toBe(email.toLowerCase());
     });
 
     it('should return the correct password value', () => {

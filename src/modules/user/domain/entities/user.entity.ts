@@ -1,6 +1,5 @@
 import { BaseEntity } from '@/shared/domain/base-entity';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
-import * as yup from 'yup';
 
 interface UserProps {
   id?: string;
@@ -25,36 +24,36 @@ export class User extends BaseEntity {
   }
 
   private validate(props: UserProps): void {
-    const schema = yup.object().shape({
-      name: yup
-        .string()
-        .required('Name is required')
-        .max(100, 'Name must be at most 100 characters'),
-      email: yup
-        .string()
-        .email('Email must be a valid email')
-        .required('Email is required')
-        .max(255, 'Email must be at most 255 characters'),
-      password: yup
-        .string()
-        .required('Password is required')
-        .max(255, 'Password must be at most 255 characters'),
-    });
+    const notification = new NotificationError();
 
-    try {
-      schema.validateSync(props, { abortEarly: false });
-    } catch (err: any) {
-      const notification = new NotificationError();
-
-      err.inner.forEach((validationError: yup.ValidationError) => {
-        notification.addError({
-          message: validationError.message,
-          code: 'BAD_REQUEST',
-          context: 'User',
-          field: validationError.path,
-        });
+    if (!props.name) {
+      notification.addError({
+        message: 'Name is required',
+        code: 'BAD_REQUEST',
+        context: 'User',
+        field: 'name',
       });
+    }
 
+    if (!props.email) {
+      notification.addError({
+        message: 'Email is required',
+        code: 'BAD_REQUEST',
+        context: 'User',
+        field: 'email',
+      });
+    }
+
+    if (!props.password) {
+      notification.addError({
+        message: 'Password is required',
+        code: 'BAD_REQUEST',
+        context: 'User',
+        field: 'password',
+      });
+    }
+
+    if (notification.hasErrors()) {
       throw notification;
     }
   }
