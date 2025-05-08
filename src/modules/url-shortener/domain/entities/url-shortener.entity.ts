@@ -1,7 +1,6 @@
 import { BaseEntity } from '@/shared/domain/base-entity';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 import { generateNanoId } from '@/shared/utils/generate-nano-id';
-import * as yup from 'yup';
 
 interface UrlShortenerProps {
   id?: string;
@@ -31,27 +30,29 @@ export class UrlShortener extends BaseEntity {
   }
 
   private validate(props: UrlShortenerProps): void {
-    const schema = yup.object().shape({
-      originalUrl: yup
-        .string()
-        .url('Original URL must be a valid URL')
-        .required('Original URL is required'),
-    });
+    const notification = new NotificationError();
 
-    try {
-      schema.validateSync(props, { abortEarly: false });
-    } catch (err: any) {
-      const notification = new NotificationError();
-
-      err.inner.forEach((validationError: yup.ValidationError) => {
+    if (!props.originalUrl) {
+      notification.addError({
+        message: 'Original URL is required',
+        code: 'BAD_REQUEST',
+        context: 'UrlShortener',
+        field: 'originalUrl',
+      });
+    } else {
+      try {
+        new URL(props.originalUrl);
+      } catch {
         notification.addError({
-          message: validationError.message,
+          message: 'Original URL must be a valid URL',
           code: 'BAD_REQUEST',
           context: 'UrlShortener',
-          field: validationError.path,
+          field: 'originalUrl',
         });
-      });
+      }
+    }
 
+    if (notification.hasErrors()) {
       throw notification;
     }
   }
