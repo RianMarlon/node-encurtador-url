@@ -78,6 +78,16 @@ export class UrlShortener extends BaseEntity {
   }
 
   changeOriginalUrl(originalUrl: string): void {
+    if (this._deletedAt) {
+      throw new NotificationError([
+        {
+          message: 'This URL has been deleted',
+          code: 'BAD_REQUEST',
+          context: 'UrlShortener',
+          field: 'originalUrl',
+        },
+      ]);
+    }
     this.validate({ originalUrl });
     this._originalUrl = originalUrl;
     this._clickCount = 0;
@@ -85,6 +95,16 @@ export class UrlShortener extends BaseEntity {
   }
 
   incrementClickCount(): void {
+    if (this._deletedAt) {
+      throw new NotificationError([
+        {
+          message: 'This URL has been deleted',
+          code: 'BAD_REQUEST',
+          context: 'UrlShortener',
+          field: 'originalUrl',
+        },
+      ]);
+    }
     this._clickCount++;
   }
 

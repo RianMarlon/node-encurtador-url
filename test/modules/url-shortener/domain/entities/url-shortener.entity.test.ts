@@ -247,6 +247,37 @@ describe('UrlShortener', () => {
       urlShortener.incrementClickCount();
       expect(urlShortener.clickCount).toBe(initialClickCount + 1);
     });
+
+    it('should throw NotificationError when trying to increment click count of a deleted URL', () => {
+      const urlShortener = new UrlShortener({ originalUrl: 'https://example.com' });
+      urlShortener.delete();
+
+      expect(() => {
+        urlShortener.incrementClickCount();
+      }).toThrow(NotificationError);
+    });
+
+    it('should throw NotificationError with correct error details when trying to increment click count of a deleted URL', () => {
+      const urlShortener = new UrlShortener({ originalUrl: 'https://example.com' });
+      urlShortener.delete();
+
+      try {
+        urlShortener.incrementClickCount();
+        fail('Expected incrementClickCount to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotificationError);
+        const notificationError = error as NotificationError;
+
+        expect(notificationError.hasErrors()).toBe(true);
+
+        const errors = notificationError.getErrors();
+        expect(errors.length).toBe(1);
+        expect(errors[0].message).toBe('This URL has been deleted');
+        expect(errors[0].code).toBe('BAD_REQUEST');
+        expect(errors[0].context).toBe('UrlShortener');
+        expect(errors[0].field).toBe('originalUrl');
+      }
+    });
   });
 
   describe('changeOriginalUrl', () => {
@@ -317,6 +348,53 @@ describe('UrlShortener', () => {
         expect(errors[0].code).toBe('BAD_REQUEST');
         expect(errors[0].context).toBe('UrlShortener');
         expect(errors[0].field).toBe('originalUrl');
+      }
+    });
+
+    it('should throw NotificationError when trying to change URL of a deleted URL', () => {
+      const urlShortener = new UrlShortener({ originalUrl: 'https://example.com' });
+      urlShortener.delete();
+
+      expect(() => {
+        urlShortener.changeOriginalUrl('https://newexample.com');
+      }).toThrow(NotificationError);
+    });
+
+    it('should throw NotificationError with correct error details when trying to change URL of a deleted URL', () => {
+      const urlShortener = new UrlShortener({ originalUrl: 'https://example.com' });
+      urlShortener.delete();
+
+      try {
+        urlShortener.changeOriginalUrl('https://newexample.com');
+        fail('Expected changeOriginalUrl to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotificationError);
+        const notificationError = error as NotificationError;
+
+        expect(notificationError.hasErrors()).toBe(true);
+
+        const errors = notificationError.getErrors();
+        expect(errors.length).toBe(1);
+        expect(errors[0].message).toBe('This URL has been deleted');
+        expect(errors[0].code).toBe('BAD_REQUEST');
+        expect(errors[0].context).toBe('UrlShortener');
+        expect(errors[0].field).toBe('originalUrl');
+      }
+    });
+
+    it('should validate the new URL before checking if the URL is deleted', () => {
+      const urlShortener = new UrlShortener({ originalUrl: 'https://example.com' });
+      urlShortener.delete();
+
+      try {
+        urlShortener.changeOriginalUrl('invalid-url');
+        fail('Expected changeOriginalUrl to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotificationError);
+        const notificationError = error as NotificationError;
+
+        const errors = notificationError.getErrors();
+        expect(errors[0].message).toBe('This URL has been deleted');
       }
     });
   });
