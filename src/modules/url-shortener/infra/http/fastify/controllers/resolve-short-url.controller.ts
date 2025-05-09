@@ -3,7 +3,6 @@ import { container } from 'tsyringe';
 import * as yup from 'yup';
 
 import { ResolveShortUrlUseCase } from '@/modules/url-shortener/application/usecases/resolve-short-url/resolve-short-url.usecase';
-import { UUID_V7_REGEX } from '@/shared/utils/regex/uuid';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 
 interface ResolveShortUrlParams {
@@ -13,10 +12,7 @@ interface ResolveShortUrlParams {
 export class ResolveShortUrlController {
   async handle(request: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
     const schema = yup.object().shape({
-      urlKey: yup
-        .string()
-        .required('The urlKey parameter is required')
-        .matches(UUID_V7_REGEX, 'The urlKey must be a valid UUID v7'),
+      urlKey: yup.string().required('The urlKey parameter is required'),
     });
 
     try {

@@ -159,41 +159,10 @@ describe('UpdateOriginalUrlByUrlKeyController', () => {
     expect(mockUpdateOriginalUrlByUrlKeyUseCase.execute).not.toHaveBeenCalled();
   });
 
-  it('should throw NotificationError when urlKey is invalid', async () => {
+  it('should throw NotificationError when urlKey and originalUrl are missing', async () => {
     const requestWithInvalidUrl = {
-      params: { urlKey: '9282' },
-      body: {
-        originalUrl,
-      },
-      user: { id: userId },
-    } as unknown as FastifyRequest;
-
-    await expect(
-      updateOriginalUrlByUrlKeyController.handle(requestWithInvalidUrl, mockReply),
-    ).rejects.toBeInstanceOf(NotificationError);
-
-    try {
-      await updateOriginalUrlByUrlKeyController.handle(requestWithInvalidUrl, mockReply);
-    } catch (error) {
-      const errors = (error as NotificationError).getErrors();
-      expect(errors).toHaveLength(1);
-      expect(errors[0]).toMatchObject({
-        message: 'The urlKey must be a valid UUID v7',
-        code: 'BAD_REQUEST',
-        context: 'UrlShortener',
-        field: 'urlKey',
-      });
-    }
-
-    expect(mockUpdateOriginalUrlByUrlKeyUseCase.execute).not.toHaveBeenCalled();
-  });
-
-  it('should throw NotificationError when urlKey and originalUrl are invalid', async () => {
-    const requestWithInvalidUrl = {
-      params: { urlKey: '9282' },
-      body: {
-        originalUrl: 'invalid',
-      },
+      params: {},
+      body: {},
       user: { id: userId },
     } as unknown as FastifyRequest;
 
@@ -207,13 +176,13 @@ describe('UpdateOriginalUrlByUrlKeyController', () => {
       const errors = (error as NotificationError).getErrors();
       expect(errors).toHaveLength(2);
       expect(errors[0]).toMatchObject({
-        message: 'Original URL must be a valid URL',
+        message: 'Original URL is required',
         code: 'BAD_REQUEST',
         context: 'UrlShortener',
         field: 'originalUrl',
       });
       expect(errors[1]).toMatchObject({
-        message: 'The urlKey must be a valid UUID v7',
+        message: 'The urlKey parameter is required',
         code: 'BAD_REQUEST',
         context: 'UrlShortener',
         field: 'urlKey',

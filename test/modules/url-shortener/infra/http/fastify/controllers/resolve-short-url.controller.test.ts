@@ -84,39 +84,6 @@ describe('ResolveShortUrlController', () => {
     expect(mockReply.status).not.toHaveBeenCalled();
   });
 
-  it('should throw NotificationError when urlKey is invalid', async () => {
-    mockResolveShortUrlUseCase.execute.mockResolvedValueOnce({
-      originalUrl: '3434',
-    });
-
-    const mockRequestError = {
-      params: {
-        urlKey: 'invalid-uuid',
-      },
-      user: {
-        id: userId,
-      },
-    } as unknown as FastifyRequest;
-
-    try {
-      await resolveShortUrlController.handle(mockRequestError, mockReply);
-    } catch (error) {
-      expect(error).toBeInstanceOf(NotificationError);
-
-      const errors = (error as NotificationError).getErrors();
-      expect(errors).toHaveLength(1);
-      expect(errors[0]).toMatchObject({
-        message: 'The urlKey must be a valid UUID v7',
-        code: 'BAD_REQUEST',
-        context: 'UrlShortener',
-        field: 'urlKey',
-      });
-    }
-
-    expect(mockResolveShortUrlUseCase.execute).not.toHaveBeenCalled();
-    expect(mockReply.status).not.toHaveBeenCalled();
-  });
-
   it('should propagate NotificationError from the use case', async () => {
     const notificationError = new NotificationError([
       {

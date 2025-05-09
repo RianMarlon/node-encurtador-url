@@ -4,7 +4,6 @@ import * as yup from 'yup';
 
 import { UpdateOriginalUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/update-original-url-by-url-key/update-original-url-by-url-key.usecase';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
-import { UUID_V7_REGEX } from '@/shared/utils/regex/uuid';
 
 interface UpdateOriginalUrlByUrlKeyParams {
   urlKey: string;
@@ -21,10 +20,7 @@ export class UpdateOriginalUrlByUrlKeyController {
         .string()
         .url('Original URL must be a valid URL')
         .required('Original URL is required'),
-      urlKey: yup
-        .string()
-        .required('The urlKey parameter is required')
-        .matches(UUID_V7_REGEX, 'The urlKey must be a valid UUID v7'),
+      urlKey: yup.string().required('The urlKey parameter is required'),
     });
 
     try {
