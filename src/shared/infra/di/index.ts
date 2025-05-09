@@ -15,7 +15,6 @@ import { CreateUserUseCase } from '@/modules/user/application/usecases/create-us
 import { JsonWebTokenProvider } from '@/shared/providers/jwt/implementations/jsonwebtoken-provider';
 import { LoginUseCase } from '@/modules/auth/application/usecases/login/login.usecase';
 import { JwtProvider } from '@/shared/providers/jwt/interfaces/jwt-provider.interface';
-import { PasswordStrengthSpecification } from '@/modules/user/domain/specifications/password-strength.specification';
 import { DeleteShortUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/delete-short-url-by-url-key/delete-short-url-by-url-key.usecase';
 import { UpdateOriginalUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/update-original-url-by-url-key/update-original-url-by-url-key.usecase';
 
@@ -39,9 +38,5 @@ container.registerSingleton(LoginUseCase);
 
 container.registerSingleton(DeleteShortUrlByUrlKeyUseCase);
 container.registerSingleton(UpdateOriginalUrlByUrlKeyUseCase);
-container.registerSingleton<PasswordStrengthSpecification>(
-  'PasswordStrengthSpecification',
-  PasswordStrengthSpecification,
-);
 
 export { container };
