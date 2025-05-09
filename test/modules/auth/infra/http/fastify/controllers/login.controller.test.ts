@@ -72,6 +72,161 @@ describe('LoginController', () => {
     });
   });
 
+  it('should throw NotificationError when email is missing', async () => {
+    const request = {
+      body: {
+        password: 'df24024if',
+      },
+    } as unknown as FastifyRequest;
+
+    try {
+      await loginController.handle(request, mockReply);
+    } catch (error) {
+      const errors = (error as NotificationError).getErrors();
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toMatchObject({
+        message: 'Email is required',
+        code: 'BAD_REQUEST',
+        field: 'email',
+      });
+    }
+
+    expect(mockLoginUseCase.execute).not.toHaveBeenCalled();
+    expect(mockReply.status).not.toHaveBeenCalled();
+    expect(mockReply.send).not.toHaveBeenCalled();
+  });
+
+  it('should throw NotificationError when email is invalid', async () => {
+    const request = {
+      body: {
+        email: 'invalid',
+        password: 'skljd(393@34',
+      },
+    } as unknown as FastifyRequest;
+
+    try {
+      await loginController.handle(request, mockReply);
+    } catch (error) {
+      const errors = (error as NotificationError).getErrors();
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toMatchObject({
+        message: 'Email must be a valid email',
+        code: 'BAD_REQUEST',
+        field: 'email',
+      });
+    }
+
+    expect(mockLoginUseCase.execute).not.toHaveBeenCalled();
+    expect(mockReply.status).not.toHaveBeenCalled();
+    expect(mockReply.send).not.toHaveBeenCalled();
+  });
+
+  it('should throw NotificationError when email is invalid and has more than 255 characters', async () => {
+    const request = {
+      body: {
+        email: 'ef3'.repeat(100),
+        password: 'skljd(393@34',
+      },
+    } as unknown as FastifyRequest;
+
+    try {
+      await loginController.handle(request, mockReply);
+    } catch (error) {
+      const errors = (error as NotificationError).getErrors();
+      expect(errors).toHaveLength(2);
+      expect(errors[0]).toMatchObject({
+        message: 'Email must be a valid email',
+        code: 'BAD_REQUEST',
+        field: 'email',
+      });
+      expect(errors[1]).toMatchObject({
+        message: 'Email must be at most 255 characters',
+        code: 'BAD_REQUEST',
+        field: 'email',
+      });
+    }
+
+    expect(mockLoginUseCase.execute).not.toHaveBeenCalled();
+    expect(mockReply.status).not.toHaveBeenCalled();
+    expect(mockReply.send).not.toHaveBeenCalled();
+  });
+
+  it('should throw NotificationError when password is missing', async () => {
+    const request = {
+      body: {
+        email: 'teste@teste.com',
+      },
+    } as unknown as FastifyRequest;
+
+    try {
+      await loginController.handle(request, mockReply);
+    } catch (error) {
+      const errors = (error as NotificationError).getErrors();
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toMatchObject({
+        message: 'Password is required',
+        code: 'BAD_REQUEST',
+        field: 'password',
+      });
+    }
+
+    expect(mockLoginUseCase.execute).not.toHaveBeenCalled();
+    expect(mockReply.status).not.toHaveBeenCalled();
+    expect(mockReply.send).not.toHaveBeenCalled();
+  });
+
+  it('should throw NotificationError when password has more than 255 characters', async () => {
+    const request = {
+      body: {
+        email: 'teste@teste.com',
+        password: '2cs'.repeat(100),
+      },
+    } as unknown as FastifyRequest;
+
+    try {
+      await loginController.handle(request, mockReply);
+    } catch (error) {
+      const errors = (error as NotificationError).getErrors();
+      expect(errors).toHaveLength(1);
+      expect(errors[0]).toMatchObject({
+        message: 'Password must be at most 255 characters',
+        code: 'BAD_REQUEST',
+        field: 'password',
+      });
+    }
+
+    expect(mockLoginUseCase.execute).not.toHaveBeenCalled();
+    expect(mockReply.status).not.toHaveBeenCalled();
+    expect(mockReply.send).not.toHaveBeenCalled();
+  });
+
+  it('should throw NotificationError when email and password are missing', async () => {
+    const request = {
+      body: {},
+    } as unknown as FastifyRequest;
+
+    try {
+      await loginController.handle(request, mockReply);
+    } catch (error) {
+      const errors = (error as NotificationError).getErrors();
+      expect(errors).toHaveLength(2);
+      expect(errors[0]).toMatchObject({
+        message: 'Email is required',
+        code: 'BAD_REQUEST',
+        field: 'email',
+      });
+      expect(errors[1]).toMatchObject({
+        message: 'Password is required',
+        code: 'BAD_REQUEST',
+        field: 'password',
+      });
+    }
+
+    expect(mockLoginUseCase.execute).not.toHaveBeenCalled();
+    expect(mockReply.status).not.toHaveBeenCalled();
+    expect(mockReply.send).not.toHaveBeenCalled();
+  });
+
   it('should propagate errors from the login use case', async () => {
     const notificationError = new NotificationError([
       {

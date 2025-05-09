@@ -7,7 +7,6 @@ import { NotificationError } from '@/shared/domain/errors/notification-error';
 
 import { LoginUseCaseInputDTO } from './dto/login-usecase-input.dto';
 import { LoginUseCaseOutputDTO } from './dto/login-usecase-output.dto';
-import { LoginValidator } from '@/modules/auth/domain/validators/login-validator';
 
 @injectable()
 export class LoginUseCase {
@@ -18,13 +17,9 @@ export class LoginUseCase {
     private hashProvider: HashProvider,
     @inject('JwtProvider')
     private jwtProvider: JwtProvider,
-    @inject('LoginValidator')
-    private validator: LoginValidator,
   ) {}
 
   async execute({ email, password }: LoginUseCaseInputDTO): Promise<LoginUseCaseOutputDTO> {
-    await this.validator.validate({ email, password });
-
     const user = await this.userRepository.findByEmail(email.toLowerCase());
 
     if (!user) {
