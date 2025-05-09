@@ -78,6 +78,18 @@ app.setErrorHandler((error, request, reply) => {
     return;
   }
 
+  if (error instanceof SyntaxError && error.message.includes('JSON')) {
+    reply.status(400).send({
+      errors: [
+        {
+          message: 'Invalid JSON payload',
+        },
+      ],
+    });
+
+    return;
+  }
+
   app.log.error(error);
   reply.status(500).send({ errors: [{ message: 'Internal Server Error' }] });
 });
