@@ -1,4 +1,4 @@
-import { BaseEntity } from '@/shared/domain/base-entity';
+import { BaseEntity } from '@/shared/domain/entities/base-entity';
 import { generateEntityID } from '@/shared/utils/generate-entity-id';
 
 jest.mock('@/shared/utils/generate-entity-id', () => ({

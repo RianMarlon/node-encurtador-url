@@ -1,8 +1,8 @@
 import { User } from '@/modules/user/domain/entities/user.entity';
-import { BaseEntity } from '@/shared/domain/base-entity';
+import { BaseEntity } from '@/shared/domain/entities/base-entity';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 
-jest.mock('@/shared/domain/base-entity');
+jest.mock('@/shared/domain/entities/base-entity');
 
 describe('User', () => {
   const mockId = 'mock-entity-id-123';

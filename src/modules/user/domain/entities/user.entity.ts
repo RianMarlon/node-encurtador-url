@@ -1,4 +1,5 @@
-import { BaseEntity } from '@/shared/domain/base-entity';
+import AggregateRoot from '@/shared/domain/entities/aggregate-root.interface';
+import { BaseEntity } from '@/shared/domain/entities/base-entity';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 
 interface UserProps {
@@ -10,7 +11,7 @@ interface UserProps {
   updatedAt?: Date;
 }
 
-export class User extends BaseEntity {
+export class User extends BaseEntity implements AggregateRoot {
   private _name: string;
   private _email: string;
   private _password: string;

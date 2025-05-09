@@ -1,4 +1,5 @@
-import { BaseEntity } from '@/shared/domain/base-entity';
+import AggregateRoot from '@/shared/domain/entities/aggregate-root.interface';
+import { BaseEntity } from '@/shared/domain/entities/base-entity';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 import { generateNanoId } from '@/shared/utils/generate-nano-id';
 
@@ -12,7 +13,7 @@ interface UrlShortenerProps {
   deletedAt?: Date;
 }
 
-export class UrlShortener extends BaseEntity {
+export class UrlShortener extends BaseEntity implements AggregateRoot {
   private _urlKey: string;
   private _shortUrl: string;
   private _originalUrl: string;

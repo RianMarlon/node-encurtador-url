@@ -1,4 +1,4 @@
-import { generateEntityID } from '../utils/generate-entity-id';
+import { generateEntityID } from '../../utils/generate-entity-id';
 
 export class BaseEntity {
   private _id: string;

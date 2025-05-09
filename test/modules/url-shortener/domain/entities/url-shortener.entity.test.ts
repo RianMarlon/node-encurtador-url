@@ -1,13 +1,13 @@
 import { UrlShortener } from '@/modules/url-shortener/domain/entities/url-shortener.entity';
 import { generateNanoId } from '@/shared/utils/generate-nano-id';
-import { BaseEntity } from '@/shared/domain/base-entity';
+import { BaseEntity } from '@/shared/domain/entities/base-entity';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 
 jest.mock('@/shared/utils/generate-nano-id', () => ({
   generateNanoId: jest.fn(),
 }));
 
-jest.mock('@/shared/domain/base-entity');
+jest.mock('@/shared/domain/entities/base-entity');
 
 describe('UrlShortener', () => {
   const mockNanoId = 'abc123';
