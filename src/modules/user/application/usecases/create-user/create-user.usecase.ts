@@ -5,9 +5,10 @@ import { CreateUserUseCaseOutputDTO } from './dto/create-user-usecase-output.dto
 import { UserRepository } from '@/modules/user/domain/repositories/user.repository';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 import { User } from '@/modules/user/domain/entities/user.entity';
+import UseCaseInterface from '@/shared/application/use-case.interface';
 
 @injectable()
-export class CreateUserUseCase {
+export class CreateUserUseCase implements UseCaseInterface {
   constructor(
     @inject('UserRepository')
     private readonly userRepository: UserRepository,

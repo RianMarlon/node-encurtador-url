@@ -4,9 +4,10 @@ import { UserRepository } from '@/modules/user/domain/repositories/user.reposito
 import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositories/url-shortener.repository';
 import { DeleteShortUrlByUrlKeyUseCaseInputDTO } from './dto/delete-short-url-by-url-key-usecase-input.dto';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import UseCaseInterface from '@/shared/application/use-case.interface';
 
 @injectable()
-export class DeleteShortUrlByUrlKeyUseCase {
+export class DeleteShortUrlByUrlKeyUseCase implements UseCaseInterface {
   constructor(
     @inject('UserRepository')
     private readonly userRepository: UserRepository,

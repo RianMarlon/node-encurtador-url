@@ -6,9 +6,10 @@ import { CreateShortUrlUseCaseOutputDTO } from './dto/create-short-url-usecase-o
 import { CreateShortUrlUseCaseInputDTO } from './dto/create-short-url-usecase-input.dto';
 import { UserRepository } from '@/modules/user/domain/repositories/user.repository';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import UseCaseInterface from '@/shared/application/use-case.interface';
 
 @injectable()
-export class CreateShortUrlUseCase {
+export class CreateShortUrlUseCase implements UseCaseInterface {
   constructor(
     @inject('UrlShortenerRepository')
     private readonly urlShortenerRepository: UrlShortenerRepository,

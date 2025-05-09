@@ -5,9 +5,10 @@ import { UserRepository } from '@/modules/user/domain/repositories/user.reposito
 import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositories/url-shortener.repository';
 import { UpdateOriginalUrlByUrlKeyUseCaseInputDTO } from './dto/update-original-url-by-url-key-usecase-input.dto';
 import { UpdateOriginalUrlByUrlKeyUseCaseOutputDTO } from './dto/update-original-url-by-url-key-usecase-output.dto';
+import UseCaseInterface from '@/shared/application/use-case.interface';
 
 @injectable()
-export class UpdateOriginalUrlByUrlKeyUseCase {
+export class UpdateOriginalUrlByUrlKeyUseCase implements UseCaseInterface {
   constructor(
     @inject('UserRepository')
     private readonly userRepository: UserRepository,

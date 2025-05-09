@@ -7,9 +7,10 @@ import { NotificationError } from '@/shared/domain/errors/notification-error';
 
 import { LoginUseCaseInputDTO } from './dto/login-usecase-input.dto';
 import { LoginUseCaseOutputDTO } from './dto/login-usecase-output.dto';
+import UseCaseInterface from '@/shared/application/use-case.interface';
 
 @injectable()
-export class LoginUseCase {
+export class LoginUseCase implements UseCaseInterface {
   constructor(
     @inject('UserRepository')
     private userRepository: UserRepository,

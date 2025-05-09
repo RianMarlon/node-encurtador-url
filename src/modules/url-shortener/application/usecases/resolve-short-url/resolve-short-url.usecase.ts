@@ -4,9 +4,10 @@ import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositor
 import { ResolveShortUrlUseCaseInputDTO } from './dto/resolve-short-url-usecase-input.dto';
 import { ResolveShortUrlUseCaseOutputDTO } from './dto/resolve-short-url-usecase-output.dto';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import UseCaseInterface from '@/shared/application/use-case.interface';
 
 @injectable()
-export class ResolveShortUrlUseCase {
+export class ResolveShortUrlUseCase implements UseCaseInterface {
   constructor(
     @inject('UrlShortenerRepository')
     private readonly urlShortenerRepository: UrlShortenerRepository,

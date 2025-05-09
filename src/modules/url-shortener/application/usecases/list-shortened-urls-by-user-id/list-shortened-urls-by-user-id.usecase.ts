@@ -5,9 +5,10 @@ import { UserRepository } from '@/modules/user/domain/repositories/user.reposito
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 import { ListShortenedUrlsByUserIdUseCaseInputDTO } from './dto/list-shortened-urls-by-user-id-usecase-input.dto';
 import { ListShortenedUrlsByUserIdUseCaseOutputDTO } from './dto/list-shortened-urls-by-user-id-usecase-output.dto';
+import UseCaseInterface from '@/shared/application/use-case.interface';
 
 @injectable()
-export class ListShortenedUrlsByUserIdUseCase {
+export class ListShortenedUrlsByUserIdUseCase implements UseCaseInterface {
   constructor(
     @inject('UrlShortenerRepository')
     private readonly urlShortenerRepository: UrlShortenerRepository,
