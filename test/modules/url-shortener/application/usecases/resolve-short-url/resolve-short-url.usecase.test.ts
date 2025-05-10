@@ -8,9 +8,12 @@ import { NotificationError } from '@/shared/domain/errors/notification-error';
 
 describe('ResolveShortUrlUseCase', () => {
   const mockUrlShortenerRepository: jest.Mocked<UrlShortenerRepository> = {
-    create: jest.fn(),
+    findByUserId: jest.fn(),
+    findByUrlKeyAndUserId: jest.fn(),
     findByUrlKey: jest.fn(),
+    create: jest.fn(),
     update: jest.fn(),
+    delete: jest.fn(),
   };
 
   let resolveShortUrlUseCase: ResolveShortUrlUseCase;

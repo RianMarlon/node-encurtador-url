@@ -17,6 +17,8 @@ import { LoginUseCase } from '@/modules/auth/application/usecases/login/login.us
 import { JwtProvider } from '@/shared/providers/jwt/interfaces/jwt-provider.interface';
 import { DeleteShortUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/delete-short-url-by-url-key/delete-short-url-by-url-key.usecase';
 import { UpdateOriginalUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/update-original-url-by-url-key/update-original-url-by-url-key.usecase';
+import { UserFacadeInterface } from '@/modules/user/facade/user.facade.interface';
+import { UserFacade } from '@/modules/user/facade/user.facade';
 
 const prismaClient = new PrismaClient();
 container.registerInstance('PrismaClient', prismaClient);
@@ -29,6 +31,7 @@ container.registerSingleton<UrlShortenerRepository>(
 );
 
 container.registerSingleton<UserRepository>('UserRepository', UserPrismaRepository);
+container.registerSingleton<UserFacadeInterface>('UserFacade', UserFacade);
 
 container.registerSingleton(CreateShortUrlUseCase);
 container.registerSingleton(ResolveShortUrlUseCase);

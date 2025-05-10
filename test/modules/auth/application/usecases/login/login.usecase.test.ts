@@ -1,16 +1,15 @@
 import 'reflect-metadata';
 import { LoginUseCase } from '@/modules/auth/application/usecases/login/login.usecase';
-import { UserRepository } from '@/modules/user/domain/repositories/user.repository';
 import { HashProvider } from '@/shared/providers/hash/interfaces/hash-provider.interface';
 import { JwtProvider } from '@/shared/providers/jwt/interfaces/jwt-provider.interface';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 import { User } from '@/modules/user/domain/entities/user.entity';
+import { UserFacadeInterface } from '@/modules/user/facade/user.facade.interface';
 
-const mockUserRepository = {
+const mockUserFacade = {
   findByEmail: jest.fn(),
-  create: jest.fn(),
   findById: jest.fn(),
-} as jest.Mocked<UserRepository>;
+} as jest.Mocked<UserFacadeInterface>;
 
 const mockHashProvider = {
   hash: jest.fn(),
@@ -45,11 +44,11 @@ describe('LoginUseCase', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    loginUseCase = new LoginUseCase(mockUserRepository, mockHashProvider, mockJwtProvider);
+    loginUseCase = new LoginUseCase(mockUserFacade, mockHashProvider, mockJwtProvider);
   });
 
   it('should authenticate a user and return access token', async () => {
-    mockUserRepository.findByEmail.mockResolvedValueOnce(mockUser);
+    mockUserFacade.findByEmail.mockResolvedValueOnce(mockUser);
     mockHashProvider.compare.mockResolvedValueOnce(true);
     mockJwtProvider.generate.mockResolvedValueOnce(mockToken);
 
@@ -60,7 +59,7 @@ describe('LoginUseCase', () => {
 
     const result = await loginUseCase.execute(input);
 
-    expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(mockUserEmail.toLowerCase());
+    expect(mockUserFacade.findByEmail).toHaveBeenCalledWith({ email: mockUserEmail.toLowerCase() });
     expect(mockHashProvider.compare).toHaveBeenCalledWith(mockInputPassword, mockUserPassword);
     expect(mockJwtProvider.generate).toHaveBeenCalledWith({
       sub: mockUserId,
@@ -74,7 +73,7 @@ describe('LoginUseCase', () => {
   });
 
   it('should throw NotificationError when user is not found', async () => {
-    mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+    mockUserFacade.findByEmail.mockResolvedValueOnce(null);
 
     const input = {
       email: 'nonexistent@example.com',
@@ -96,13 +95,13 @@ describe('LoginUseCase', () => {
       });
     }
 
-    expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('nonexistent@example.com');
+    expect(mockUserFacade.findByEmail).toHaveBeenCalledWith({ email: 'nonexistent@example.com' });
     expect(mockHashProvider.compare).not.toHaveBeenCalled();
     expect(mockJwtProvider.generate).not.toHaveBeenCalled();
   });
 
   it('should throw NotificationError when password does not match', async () => {
-    mockUserRepository.findByEmail.mockResolvedValueOnce(mockUser);
+    mockUserFacade.findByEmail.mockResolvedValueOnce(mockUser);
     mockHashProvider.compare.mockResolvedValueOnce(false);
 
     const input = {
@@ -125,7 +124,7 @@ describe('LoginUseCase', () => {
       });
     }
 
-    expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(mockUserEmail.toLowerCase());
+    expect(mockUserFacade.findByEmail).toHaveBeenCalledWith({ email: mockUserEmail.toLowerCase() });
     expect(mockHashProvider.compare).toHaveBeenCalledWith('wrong_password', mockUserPassword);
     expect(mockJwtProvider.generate).not.toHaveBeenCalled();
   });
@@ -138,12 +137,12 @@ describe('LoginUseCase', () => {
 
     await expect(loginUseCase.execute(input)).rejects.toThrow(TypeError);
 
-    expect(mockUserRepository.findByEmail).not.toHaveBeenCalled();
+    expect(mockUserFacade.findByEmail).not.toHaveBeenCalled();
   });
 
   it('should handle uppercase email by converting to lowercase', async () => {
     const uppercaseEmail = 'TEST@EXAMPLE.COM';
-    mockUserRepository.findByEmail.mockResolvedValueOnce(mockUser);
+    mockUserFacade.findByEmail.mockResolvedValueOnce(mockUser);
     mockHashProvider.compare.mockResolvedValueOnce(true);
     mockJwtProvider.generate.mockResolvedValueOnce(mockToken);
 
@@ -154,12 +153,14 @@ describe('LoginUseCase', () => {
 
     const result = await loginUseCase.execute(input);
 
-    expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(uppercaseEmail.toLowerCase());
+    expect(mockUserFacade.findByEmail).toHaveBeenCalledWith({
+      email: uppercaseEmail.toLowerCase(),
+    });
     expect(result).toEqual({ accessToken: mockToken });
   });
 
   it('should handle errors from JWT generation', async () => {
-    mockUserRepository.findByEmail.mockResolvedValueOnce(mockUser);
+    mockUserFacade.findByEmail.mockResolvedValueOnce(mockUser);
     mockHashProvider.compare.mockResolvedValueOnce(true);
 
     const jwtError = new Error('JWT generation failed');
@@ -172,7 +173,7 @@ describe('LoginUseCase', () => {
 
     await expect(loginUseCase.execute(input)).rejects.toThrow(jwtError);
 
-    expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(mockUserEmail.toLowerCase());
+    expect(mockUserFacade.findByEmail).toHaveBeenCalledWith({ email: mockUserEmail.toLowerCase() });
     expect(mockHashProvider.compare).toHaveBeenCalledWith(mockInputPassword, mockUserPassword);
     expect(mockJwtProvider.generate).toHaveBeenCalled();
   });

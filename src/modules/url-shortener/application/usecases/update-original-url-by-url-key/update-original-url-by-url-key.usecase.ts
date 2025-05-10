@@ -1,7 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
 import { NotificationError } from '@/shared/domain/errors/notification-error';
-import { UserRepository } from '@/modules/user/domain/repositories/user.repository';
 import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositories/url-shortener.repository';
 import { UpdateOriginalUrlByUrlKeyUseCaseInputDTO } from './dto/update-original-url-by-url-key-usecase-input.dto';
 import { UpdateOriginalUrlByUrlKeyUseCaseOutputDTO } from './dto/update-original-url-by-url-key-usecase-output.dto';
@@ -10,8 +9,6 @@ import UseCaseInterface from '@/shared/application/use-case.interface';
 @injectable()
 export class UpdateOriginalUrlByUrlKeyUseCase implements UseCaseInterface {
   constructor(
-    @inject('UserRepository')
-    private readonly userRepository: UserRepository,
     @inject('UrlShortenerRepository')
     private readonly urlShortenerRepository: UrlShortenerRepository,
   ) {}
@@ -21,20 +18,7 @@ export class UpdateOriginalUrlByUrlKeyUseCase implements UseCaseInterface {
     originalUrl,
     userId,
   }: UpdateOriginalUrlByUrlKeyUseCaseInputDTO): Promise<UpdateOriginalUrlByUrlKeyUseCaseOutputDTO> {
-    const user = await this.userRepository.findById(userId);
-
-    if (!user) {
-      throw new NotificationError([
-        {
-          message: 'User not found',
-          code: 'UNAUTHORIZED',
-          context: 'UpdateOriginalUrlByUrlKey',
-        },
-      ]);
-    }
-
     const urlShortener = await this.urlShortenerRepository.findByUrlKeyAndUserId(urlKey, userId);
-
     if (!urlShortener) {
       throw new NotificationError([
         {
