@@ -16,8 +16,8 @@ describe('NotificationError', () => {
 
     it('should create an instance with initial errors', () => {
       const initialErrors: NotificationErrorItem[] = [
-        { message: 'Field is required', code: 'REQUIRED_FIELD', field: 'name' },
-        { message: 'Invalid email format', code: 'INVALID_FORMAT', field: 'email' },
+        { message: 'Field is required', code: 'BAD_REQUEST', field: 'name' },
+        { message: 'Invalid email format', code: 'BAD_REQUEST', field: 'email' },
       ];
 
       const notificationError = new NotificationError(initialErrors);
@@ -34,7 +34,7 @@ describe('NotificationError', () => {
       const notificationError = new NotificationError();
       const error: NotificationErrorItem = {
         message: 'Field is required',
-        code: 'REQUIRED_FIELD',
+        code: 'BAD_REQUEST',
         field: 'name',
       };
 
@@ -48,12 +48,12 @@ describe('NotificationError', () => {
       const notificationError = new NotificationError();
       const error1: NotificationErrorItem = {
         message: 'Field is required',
-        code: 'REQUIRED_FIELD',
+        code: 'BAD_REQUEST',
         field: 'name',
       };
       const error2: NotificationErrorItem = {
         message: 'Invalid email format',
-        code: 'INVALID_FORMAT',
+        code: 'BAD_REQUEST',
         field: 'email',
       };
 
@@ -74,7 +74,7 @@ describe('NotificationError', () => {
 
     it('should return true when there are errors', () => {
       const notificationError = new NotificationError([
-        { message: 'Field is required', code: 'REQUIRED_FIELD', field: 'name' },
+        { message: 'Field is required', code: 'BAD_REQUEST', field: 'name' },
       ]);
 
       expect(notificationError.hasErrors()).toBe(true);
@@ -90,8 +90,8 @@ describe('NotificationError', () => {
 
     it('should return all errors', () => {
       const errors: NotificationErrorItem[] = [
-        { message: 'Field is required', code: 'REQUIRED_FIELD', field: 'name' },
-        { message: 'Invalid email format', code: 'INVALID_FORMAT', field: 'email' },
+        { message: 'Field is required', code: 'BAD_REQUEST', field: 'name' },
+        { message: 'Invalid email format', code: 'BAD_REQUEST', field: 'email' },
       ];
 
       const notificationError = new NotificationError(errors);
@@ -109,15 +109,15 @@ describe('NotificationError', () => {
 
     it('should group errors by context', () => {
       const errors: NotificationErrorItem[] = [
-        { message: 'Field is required', code: 'REQUIRED_FIELD', field: 'name', context: 'user' },
+        { message: 'Field is required', code: 'BAD_REQUEST', field: 'name', context: 'user' },
         {
           message: 'Invalid email format',
-          code: 'INVALID_FORMAT',
+          code: 'BAD_REQUEST',
           field: 'email',
           context: 'user',
         },
-        { message: 'Invalid date', code: 'INVALID_DATE', field: 'birthDate', context: 'profile' },
-        { message: 'Field is too short', code: 'TOO_SHORT', field: 'bio', context: 'profile' },
+        { message: 'Invalid date', code: 'BAD_REQUEST', field: 'birthDate', context: 'profile' },
+        { message: 'Field is too short', code: 'BAD_REQUEST', field: 'bio', context: 'profile' },
       ];
 
       const notificationError = new NotificationError(errors);
@@ -125,25 +125,25 @@ describe('NotificationError', () => {
 
       expect(Object.keys(errorsByContext)).toEqual(['user', 'profile']);
       expect(errorsByContext.user).toEqual([
-        { message: 'Field is required', code: 'REQUIRED_FIELD', field: 'name', context: 'user' },
+        { message: 'Field is required', code: 'BAD_REQUEST', field: 'name', context: 'user' },
         {
           message: 'Invalid email format',
-          code: 'INVALID_FORMAT',
+          code: 'BAD_REQUEST',
           field: 'email',
           context: 'user',
         },
       ]);
       expect(errorsByContext.profile).toEqual([
-        { message: 'Invalid date', code: 'INVALID_DATE', field: 'birthDate', context: 'profile' },
-        { message: 'Field is too short', code: 'TOO_SHORT', field: 'bio', context: 'profile' },
+        { message: 'Invalid date', code: 'BAD_REQUEST', field: 'birthDate', context: 'profile' },
+        { message: 'Field is too short', code: 'BAD_REQUEST', field: 'bio', context: 'profile' },
       ]);
     });
 
     it('should use "default" as context when not specified', () => {
       const errors: NotificationErrorItem[] = [
-        { message: 'Field is required', code: 'REQUIRED_FIELD', field: 'name' },
-        { message: 'Invalid email format', code: 'INVALID_FORMAT', field: 'email' },
-        { message: 'Invalid date', code: 'INVALID_DATE', field: 'birthDate', context: 'profile' },
+        { message: 'Field is required', code: 'BAD_REQUEST', field: 'name' },
+        { message: 'Invalid email format', code: 'BAD_REQUEST', field: 'email' },
+        { message: 'Invalid date', code: 'BAD_REQUEST', field: 'birthDate', context: 'profile' },
       ];
 
       const notificationError = new NotificationError(errors);
@@ -151,11 +151,11 @@ describe('NotificationError', () => {
 
       expect(Object.keys(errorsByContext)).toEqual(['default', 'profile']);
       expect(errorsByContext.default).toEqual([
-        { message: 'Field is required', code: 'REQUIRED_FIELD', field: 'name' },
-        { message: 'Invalid email format', code: 'INVALID_FORMAT', field: 'email' },
+        { message: 'Field is required', code: 'BAD_REQUEST', field: 'name' },
+        { message: 'Invalid email format', code: 'BAD_REQUEST', field: 'email' },
       ]);
       expect(errorsByContext.profile).toEqual([
-        { message: 'Invalid date', code: 'INVALID_DATE', field: 'birthDate', context: 'profile' },
+        { message: 'Invalid date', code: 'BAD_REQUEST', field: 'birthDate', context: 'profile' },
       ]);
     });
   });
@@ -169,8 +169,8 @@ describe('NotificationError', () => {
 
     it('should return an object with errors property containing all errors', () => {
       const errors: NotificationErrorItem[] = [
-        { message: 'Field is required', code: 'REQUIRED_FIELD', field: 'name' },
-        { message: 'Invalid email format', code: 'INVALID_FORMAT', field: 'email' },
+        { message: 'Field is required', code: 'BAD_REQUEST', field: 'name' },
+        { message: 'Invalid email format', code: 'BAD_REQUEST', field: 'email' },
       ];
 
       const notificationError = new NotificationError(errors);
