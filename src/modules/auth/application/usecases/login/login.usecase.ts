@@ -1,7 +1,7 @@
 import { injectable, inject } from 'tsyringe';
 
-import { HashProvider } from '@/shared/domain/interfaces/hash-provider.interface';
-import { JwtProvider } from '@/shared/domain/interfaces/jwt-provider.interface';
+import { HashProvider } from '@/shared/domain/providers/hash-provider.interface';
+import { JwtProvider } from '@/shared/domain/providers/jwt-provider.interface';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 
 import { LoginUseCaseInputDTO } from './dto/login-usecase-input.dto';

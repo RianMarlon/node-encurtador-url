@@ -1,4 +1,4 @@
-import { HashProvider } from '@/shared/domain/interfaces/hash-provider.interface';
+import { HashProvider } from '@/shared/domain/providers/hash-provider.interface';
 import { inject, injectable } from 'tsyringe';
 import { CreateUserUseCaseInputDTO } from './dto/create-user-usecase-input.dto';
 import { CreateUserUseCaseOutputDTO } from './dto/create-user-usecase-output.dto';

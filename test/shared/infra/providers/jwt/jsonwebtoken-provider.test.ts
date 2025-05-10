@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import jwt from 'jsonwebtoken';
 import { JsonWebTokenProvider } from '@/shared/infra/providers/jwt/jsonwebtoken-provider';
-import { JwtPayload } from '@/shared/domain/interfaces/jwt-provider.interface';
+import { JwtPayload } from '@/shared/domain/providers/jwt-provider.interface';
 
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn(),

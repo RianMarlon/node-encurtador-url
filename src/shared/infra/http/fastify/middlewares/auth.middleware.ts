@@ -1,6 +1,6 @@
 import { container } from 'tsyringe';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { JwtProvider } from '@/shared/domain/interfaces/jwt-provider.interface';
+import { JwtProvider } from '@/shared/domain/providers/jwt-provider.interface';
 
 export class AuthMiddleware {
   private readonly jwtProvider: JwtProvider = container.resolve('JwtProvider');

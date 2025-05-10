@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { container } from 'tsyringe';
 import { AuthMiddleware } from '@/shared/infra/http/fastify/middlewares/auth.middleware';
-import { JwtProvider } from '@/shared/domain/interfaces/jwt-provider.interface';
+import { JwtProvider } from '@/shared/domain/providers/jwt-provider.interface';
 
 describe('AuthMiddleware', () => {
   let authMiddleware: AuthMiddleware;

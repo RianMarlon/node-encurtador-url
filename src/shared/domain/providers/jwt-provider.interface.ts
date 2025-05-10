@@ -1,5 +1,5 @@
 export interface JwtPayload {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface JwtProvider {
