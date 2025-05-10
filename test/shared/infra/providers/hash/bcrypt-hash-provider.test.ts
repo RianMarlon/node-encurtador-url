@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import bcrypt from 'bcryptjs';
-import { BcryptHashProvider } from '@/shared/providers/hash/implementations/bcrypt-hash-provider';
+import { BcryptHashProvider } from '@/shared/infra/providers/hash/bcrypt-hash-provider';
 
 jest.mock('bcryptjs', () => ({
   genSalt: jest.fn().mockResolvedValue(10),

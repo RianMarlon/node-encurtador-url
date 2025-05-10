@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { CreateUserUseCase } from '@/modules/user/application/usecases/create-user/create-user.usecase';
 import { CreateUserUseCaseInputDTO } from '@/modules/user/application/usecases/create-user/dto/create-user-usecase-input.dto';
 import { UserRepository } from '@/modules/user/domain/repositories/user.repository';
-import { HashProvider } from '@/shared/providers/hash/interfaces/hash-provider.interface';
+import { HashProvider } from '@/shared/domain/interfaces/hash-provider.interface';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 import { User } from '@/modules/user/domain/entities/user.entity';
 

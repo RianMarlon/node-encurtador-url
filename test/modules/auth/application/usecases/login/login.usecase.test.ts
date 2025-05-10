@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { LoginUseCase } from '@/modules/auth/application/usecases/login/login.usecase';
-import { HashProvider } from '@/shared/providers/hash/interfaces/hash-provider.interface';
-import { JwtProvider } from '@/shared/providers/jwt/interfaces/jwt-provider.interface';
+import { HashProvider } from '@/shared/domain/interfaces/hash-provider.interface';
+import { JwtProvider } from '@/shared/domain/interfaces/jwt-provider.interface';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 import { User } from '@/modules/user/domain/entities/user.entity';
 import { UserFacadeInterface } from '@/modules/user/facade/user.facade.interface';

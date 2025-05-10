@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { injectable } from 'tsyringe';
 
-import { HashProvider } from '../interfaces/hash-provider.interface';
+import { HashProvider } from '../../../domain/interfaces/hash-provider.interface';
 
 @injectable()
 export class BcryptHashProvider implements HashProvider {
