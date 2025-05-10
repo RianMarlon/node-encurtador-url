@@ -5,6 +5,21 @@ Todas as alterações importantes neste projeto serão documentadas neste arquiv
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.7.0] - 10/05/2025
+
+### Refatorações
+- Agora os módulos se comunicam por meio de **facades**, gerando baixo acoplamento entre eles.
+- Reorganização da pasta `providers`:
+  - Interfaces movidas para `domain`.
+  - Implementações concretas movidas para `infra`.
+
+### Funcionalidades
+- Implementado middleware `checkAuthenticatedUser`:
+  - Consulta o banco de dados para confirmar que o usuário existe.
+  - Retorna `401 Unauthorized` se não encontrado.
+
+[1.7.0]: https://github.com/RianMarlon/node-encurtador-url/releases/tag/v1.7.0
+
 ## [1.6.0] - 09/05/2025
 
 ### Refatorações
