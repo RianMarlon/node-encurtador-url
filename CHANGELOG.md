@@ -5,6 +5,16 @@ Todas as alterações importantes neste projeto serão documentadas neste arquiv
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [v2.0.0] - 11/05/2025
+
+### Correção
+- Corrigido bug crítico que impedia a aplicação de subir corretamente.
+  - O erro foi introduzido na versão v1.5.0 e afetava todas as versões até v1.7.0.
+
+### Importante
+Esta versão marca o retorno da estabilidade da aplicação.
+Recomenda-se **não utilizar** as versões v1.5.0 até v1.7.0.
+
 ## [1.7.0] - 10/05/2025
 
 ### Refatorações
