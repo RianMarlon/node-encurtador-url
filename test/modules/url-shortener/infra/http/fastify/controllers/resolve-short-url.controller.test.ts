@@ -5,6 +5,7 @@ import { container } from 'tsyringe';
 import { ResolveShortUrlController } from '@/modules/url-shortener/infra/http/fastify/controllers/resolve-short-url.controller';
 import { ResolveShortUrlUseCase } from '@/modules/url-shortener/application/usecases/resolve-short-url/resolve-short-url.usecase';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 jest.mock(
   '@/modules/url-shortener/application/usecases/resolve-short-url/resolve-short-url.usecase',
@@ -13,6 +14,7 @@ jest.mock(
 describe('ResolveShortUrlController', () => {
   let resolveShortUrlController: ResolveShortUrlController;
   let mockResolveShortUrlUseCase: jest.Mocked<ResolveShortUrlUseCase>;
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   const urlKey = '0196b231-1b20-7455-81f5-f85f8c1330a8';
   const userId = '0196b231-1b20-7455-81f5-f85f8c1330a8';
@@ -36,7 +38,12 @@ describe('ResolveShortUrlController', () => {
       execute: jest.fn(),
     } as unknown as jest.Mocked<ResolveShortUrlUseCase>;
 
-    jest.spyOn(container, 'resolve').mockReturnValue(mockResolveShortUrlUseCase);
+    mockLoggerProvider = {
+      debug: jest.fn(),
+    } as unknown as jest.Mocked<LoggerProvider>;
+
+    container.registerInstance('LoggerProvider', mockLoggerProvider);
+    container.registerInstance(ResolveShortUrlUseCase, mockResolveShortUrlUseCase);
 
     resolveShortUrlController = new ResolveShortUrlController();
   });
@@ -49,7 +56,6 @@ describe('ResolveShortUrlController', () => {
 
     await resolveShortUrlController.handle(mockRequest, mockReply);
 
-    expect(container.resolve).toHaveBeenCalledWith(ResolveShortUrlUseCase);
     expect(mockResolveShortUrlUseCase.execute).toHaveBeenCalledWith({
       urlKey,
     });

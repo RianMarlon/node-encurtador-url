@@ -5,16 +5,11 @@ import { ResolveShortUrlUseCase } from '@/modules/url-shortener/application/usec
 import { ResolveShortUrlUseCaseInputDTO } from '@/modules/url-shortener/application/usecases/resolve-short-url/dto/resolve-short-url-usecase-input.dto';
 import { UrlShortener } from '@/modules/url-shortener/domain/entities/url-shortener.entity';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 describe('ResolveShortUrlUseCase', () => {
-  const mockUrlShortenerRepository: jest.Mocked<UrlShortenerRepository> = {
-    findByUserId: jest.fn(),
-    findByUrlKeyAndUserId: jest.fn(),
-    findByUrlKey: jest.fn(),
-    create: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-  };
+  let mockUrlShortenerRepository: jest.Mocked<UrlShortenerRepository>;
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   let resolveShortUrlUseCase: ResolveShortUrlUseCase;
 
@@ -27,7 +22,26 @@ describe('ResolveShortUrlUseCase', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    resolveShortUrlUseCase = new ResolveShortUrlUseCase(mockUrlShortenerRepository);
+
+    mockUrlShortenerRepository = {
+      findByUserId: jest.fn(),
+      findByUrlKeyAndUserId: jest.fn(),
+      findByUrlKey: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
+
+    mockLoggerProvider = {
+      debug: jest.fn(),
+      warn: jest.fn(),
+      info: jest.fn(),
+    } as unknown as jest.Mocked<LoggerProvider>;
+
+    resolveShortUrlUseCase = new ResolveShortUrlUseCase(
+      mockUrlShortenerRepository,
+      mockLoggerProvider,
+    );
   });
 
   it('should resolve to the original URL and increment click count', async () => {
