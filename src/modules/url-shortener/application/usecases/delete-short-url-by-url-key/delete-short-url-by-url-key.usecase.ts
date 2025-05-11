@@ -35,7 +35,7 @@ export class DeleteShortUrlByUrlKeyUseCase implements UseCaseInterface {
     await this.urlShortenerRepository.delete(urlShortener);
 
     this.logger.info(
-      `Short URL with key "${urlKey}" belonging to user with ID "${userId}" deleted successfully.`,
+      `Short URL with key ${urlKey} belonging to user with ID ${userId} deleted successfully.`,
     );
   }
 }

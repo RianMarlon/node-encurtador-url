@@ -139,7 +139,7 @@ describe('NotificationError', () => {
       ]);
     });
 
-    it('should use "default" as context when not specified', () => {
+    it('should use default as context when not specified', () => {
       const errors: NotificationErrorItem[] = [
         { message: 'Field is required', code: 'BAD_REQUEST', field: 'name' },
         { message: 'Invalid email format', code: 'BAD_REQUEST', field: 'email' },

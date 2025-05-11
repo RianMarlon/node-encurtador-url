@@ -26,9 +26,7 @@ export class UpdateOriginalUrlByUrlKeyUseCase implements UseCaseInterface {
     );
     const urlShortener = await this.urlShortenerRepository.findByUrlKeyAndUserId(urlKey, userId);
     if (!urlShortener) {
-      this.logger.warn(
-        `URL with key "${urlKey}" not found or does not belong to user "${userId}".`,
-      );
+      this.logger.warn(`URL with key ${urlKey} not found or does not belong to user ${userId}.`);
       throw new NotificationError([
         {
           message: 'URL not found or does not belong to this user',
@@ -39,7 +37,7 @@ export class UpdateOriginalUrlByUrlKeyUseCase implements UseCaseInterface {
     }
 
     this.logger.debug(
-      `Changing original URL for key ${urlKey} from ${urlShortener.originalUrl} to "${originalUrl} - User ID: ${userId}`,
+      `Changing original URL for key ${urlKey} from ${urlShortener.originalUrl} to ${originalUrl} - User ID: ${userId}`,
     );
     urlShortener.changeOriginalUrl(originalUrl);
 
