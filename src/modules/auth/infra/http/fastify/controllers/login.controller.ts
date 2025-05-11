@@ -4,6 +4,7 @@ import * as yup from 'yup';
 
 import { LoginUseCase } from '@/modules/auth/application/usecases/login/login.usecase';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 interface LoginRequest {
   email: string;
@@ -12,6 +13,11 @@ interface LoginRequest {
 
 export class LoginController {
   async handle(request: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
+    const logger = container.resolve<LoggerProvider>('LoggerProvider');
+    logger.debug(
+      `Login - Request body (without the password): ${request.body ? JSON.stringify({ email: (request.body as LoginRequest)?.email }) : 'null'}`,
+    );
+
     const schema = yup.object().shape({
       email: yup
         .string()

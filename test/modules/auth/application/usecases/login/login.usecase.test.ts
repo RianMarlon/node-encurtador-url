@@ -5,27 +5,16 @@ import { JwtProvider } from '@/shared/domain/providers/jwt-provider.interface';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 import { User } from '@/modules/user/domain/entities/user.entity';
 import { UserFacadeInterface } from '@/modules/user/facade/user.facade.interface';
-
-const mockUserFacade = {
-  findByEmail: jest.fn(),
-  findById: jest.fn(),
-} as jest.Mocked<UserFacadeInterface>;
-
-const mockHashProvider = {
-  hash: jest.fn(),
-  compare: jest.fn(),
-} as jest.Mocked<HashProvider>;
-
-const mockJwtProvider = {
-  generate: jest.fn(),
-  verify: jest.fn(),
-  decode: jest.fn(),
-} as jest.Mocked<JwtProvider>;
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 jest.mock('@/modules/user/domain/entities/user.entity');
 
 describe('LoginUseCase', () => {
   let loginUseCase: LoginUseCase;
+  let mockUserFacade: jest.Mocked<UserFacadeInterface>;
+  let mockHashProvider: jest.Mocked<HashProvider>;
+  let mockJwtProvider: jest.Mocked<JwtProvider>;
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   const mockUserId = 'user-123';
   const mockUserName = 'Test User';
@@ -44,7 +33,34 @@ describe('LoginUseCase', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    loginUseCase = new LoginUseCase(mockUserFacade, mockHashProvider, mockJwtProvider);
+    mockUserFacade = {
+      findByEmail: jest.fn(),
+      findById: jest.fn(),
+    } as jest.Mocked<UserFacadeInterface>;
+
+    mockHashProvider = {
+      hash: jest.fn(),
+      compare: jest.fn(),
+    } as jest.Mocked<HashProvider>;
+
+    mockJwtProvider = {
+      generate: jest.fn(),
+      verify: jest.fn(),
+      decode: jest.fn(),
+    } as jest.Mocked<JwtProvider>;
+
+    mockLoggerProvider = {
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+    } as unknown as jest.Mocked<LoggerProvider>;
+
+    loginUseCase = new LoginUseCase(
+      mockUserFacade,
+      mockHashProvider,
+      mockJwtProvider,
+      mockLoggerProvider,
+    );
   });
 
   it('should authenticate a user and return access token', async () => {

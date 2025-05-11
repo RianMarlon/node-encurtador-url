@@ -5,12 +5,15 @@ import { container } from 'tsyringe';
 import { LoginController } from '@/modules/auth/infra/http/fastify/controllers/login.controller';
 import { LoginUseCase } from '@/modules/auth/application/usecases/login/login.usecase';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 jest.mock('@/modules/auth/application/usecases/login/login.usecase');
+jest.mock('@/shared/infra/providers/logger/pino-logger-provider');
 
 describe('LoginController', () => {
   let loginController: LoginController;
   let mockLoginUseCase: jest.Mocked<LoginUseCase>;
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   const mockRequest = {
     body: {
@@ -31,7 +34,12 @@ describe('LoginController', () => {
       execute: jest.fn(),
     } as unknown as jest.Mocked<LoginUseCase>;
 
-    jest.spyOn(container, 'resolve').mockReturnValue(mockLoginUseCase);
+    mockLoggerProvider = {
+      debug: jest.fn(),
+    } as unknown as jest.Mocked<LoggerProvider>;
+
+    container.registerInstance('LoggerProvider', mockLoggerProvider);
+    container.registerInstance(LoginUseCase, mockLoginUseCase);
 
     loginController = new LoginController();
   });
@@ -42,7 +50,6 @@ describe('LoginController', () => {
 
     await loginController.handle(mockRequest, mockReply);
 
-    expect(container.resolve).toHaveBeenCalledWith(LoginUseCase);
     expect(mockLoginUseCase.execute).toHaveBeenCalledWith({
       email: 'test@example.com',
       password: 'password123',
