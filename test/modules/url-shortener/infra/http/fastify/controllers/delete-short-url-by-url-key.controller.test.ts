@@ -5,6 +5,7 @@ import { container } from 'tsyringe';
 import { DeleteShortUrlByUrlKeyController } from '@/modules/url-shortener/infra/http/fastify/controllers/delete-short-url-by-url-key.controller';
 import { DeleteShortUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/delete-short-url-by-url-key/delete-short-url-by-url-key.usecase';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 jest.mock(
   '@/modules/url-shortener/application/usecases/delete-short-url-by-url-key/delete-short-url-by-url-key.usecase',
@@ -13,6 +14,7 @@ jest.mock(
 describe('DeleteShortUrlByUrlKeyController', () => {
   let deleteShortUrlByUrlKeyController: DeleteShortUrlByUrlKeyController;
   let mockDeleteShortUrlByUrlKeyUseCase: jest.Mocked<DeleteShortUrlByUrlKeyUseCase>;
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   const urlKey = '0196b230-b866-7218-b5c8-6af991656909';
   const userId = '0196b231-1b20-7455-81f5-f85f8c1330a8';
@@ -38,7 +40,12 @@ describe('DeleteShortUrlByUrlKeyController', () => {
       execute: jest.fn(),
     } as unknown as jest.Mocked<DeleteShortUrlByUrlKeyUseCase>;
 
-    jest.spyOn(container, 'resolve').mockReturnValue(mockDeleteShortUrlByUrlKeyUseCase);
+    mockLoggerProvider = {
+      debug: jest.fn(),
+    } as unknown as jest.Mocked<LoggerProvider>;
+
+    container.registerInstance('LoggerProvider', mockLoggerProvider);
+    container.registerInstance(DeleteShortUrlByUrlKeyUseCase, mockDeleteShortUrlByUrlKeyUseCase);
 
     deleteShortUrlByUrlKeyController = new DeleteShortUrlByUrlKeyController();
   });
@@ -48,7 +55,6 @@ describe('DeleteShortUrlByUrlKeyController', () => {
 
     await deleteShortUrlByUrlKeyController.handle(mockRequest, mockReply);
 
-    expect(container.resolve).toHaveBeenCalledWith(DeleteShortUrlByUrlKeyUseCase);
     expect(mockDeleteShortUrlByUrlKeyUseCase.execute).toHaveBeenCalledWith({
       urlKey,
       userId,

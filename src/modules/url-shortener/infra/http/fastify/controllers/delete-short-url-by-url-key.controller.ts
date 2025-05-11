@@ -4,6 +4,7 @@ import * as yup from 'yup';
 
 import { DeleteShortUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/delete-short-url-by-url-key/delete-short-url-by-url-key.usecase';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 interface DeleteShortUrlByUrlKeyParams {
   urlKey: string;
@@ -11,6 +12,9 @@ interface DeleteShortUrlByUrlKeyParams {
 
 export class DeleteShortUrlByUrlKeyController {
   async handle(request: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
+    const logger = container.resolve<LoggerProvider>('LoggerProvider');
+    logger.debug(`Deleting a short URL - Request params: ${JSON.stringify(request.params)}`);
+
     const schema = yup.object().shape({
       urlKey: yup.string().required('The urlKey parameter is required'),
     });

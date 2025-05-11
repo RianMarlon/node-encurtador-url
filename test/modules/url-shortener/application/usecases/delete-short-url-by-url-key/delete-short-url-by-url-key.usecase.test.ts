@@ -4,25 +4,40 @@ import { DeleteShortUrlByUrlKeyUseCase } from '@/modules/url-shortener/applicati
 import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositories/url-shortener.repository';
 import { UrlShortener } from '@/modules/url-shortener/domain/entities/url-shortener.entity';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 jest.mock('@/modules/url-shortener/domain/entities/url-shortener.entity');
 
 describe('DeleteShortUrlByUrlKeyUseCase', () => {
-  const mockUrlShortenerRepository: jest.Mocked<UrlShortenerRepository> = {
-    create: jest.fn(),
-    findByUrlKey: jest.fn(),
-    findByUrlKeyAndUserId: jest.fn(),
-    findByUserId: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-  };
+  let mockUrlShortenerRepository: jest.Mocked<UrlShortenerRepository>;
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   let deleteShortUrlByUrlKeyUseCase: DeleteShortUrlByUrlKeyUseCase;
+
   const mockDate = new Date();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    deleteShortUrlByUrlKeyUseCase = new DeleteShortUrlByUrlKeyUseCase(mockUrlShortenerRepository);
+
+    mockUrlShortenerRepository = {
+      create: jest.fn(),
+      findByUrlKey: jest.fn(),
+      findByUrlKeyAndUserId: jest.fn(),
+      findByUserId: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
+
+    mockLoggerProvider = {
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+    } as unknown as jest.Mocked<LoggerProvider>;
+
+    deleteShortUrlByUrlKeyUseCase = new DeleteShortUrlByUrlKeyUseCase(
+      mockUrlShortenerRepository,
+      mockLoggerProvider,
+    );
   });
 
   it('should delete the URL successfully', async () => {
