@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 
 import { ListShortenedUrlsByUserIdController } from '@/modules/url-shortener/infra/http/fastify/controllers/list-shortened-urls-by-user-id.controller';
 import { ListShortenedUrlsByUserIdUseCase } from '@/modules/url-shortener/application/usecases/list-shortened-urls-by-user-id/list-shortened-urls-by-user-id.usecase';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 jest.mock(
   '@/modules/url-shortener/application/usecases/list-shortened-urls-by-user-id/list-shortened-urls-by-user-id.usecase',
@@ -12,6 +13,7 @@ jest.mock(
 describe('ListShortenedUrlsByUserIdController', () => {
   let listShortenedUrlsByUserIdController: ListShortenedUrlsByUserIdController;
   let mockListShortenedUrlsByUserIdUseCase: jest.Mocked<ListShortenedUrlsByUserIdUseCase>;
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   const mockRequest = {
     user: {
@@ -31,7 +33,15 @@ describe('ListShortenedUrlsByUserIdController', () => {
       execute: jest.fn(),
     } as unknown as jest.Mocked<ListShortenedUrlsByUserIdUseCase>;
 
-    jest.spyOn(container, 'resolve').mockReturnValue(mockListShortenedUrlsByUserIdUseCase);
+    mockLoggerProvider = {
+      debug: jest.fn(),
+    } as unknown as jest.Mocked<LoggerProvider>;
+
+    container.registerInstance('LoggerProvider', mockLoggerProvider);
+    container.registerInstance(
+      ListShortenedUrlsByUserIdUseCase,
+      mockListShortenedUrlsByUserIdUseCase,
+    );
 
     listShortenedUrlsByUserIdController = new ListShortenedUrlsByUserIdController();
   });
@@ -63,7 +73,6 @@ describe('ListShortenedUrlsByUserIdController', () => {
 
     await listShortenedUrlsByUserIdController.handle(mockRequest, mockReply);
 
-    expect(container.resolve).toHaveBeenCalledWith(ListShortenedUrlsByUserIdUseCase);
     expect(mockListShortenedUrlsByUserIdUseCase.execute).toHaveBeenCalledWith({
       userId: 'user-123',
     });

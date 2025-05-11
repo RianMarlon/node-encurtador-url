@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositories/url-shortener.repository';
 import { ListShortenedUrlsByUserIdUseCase } from '@/modules/url-shortener/application/usecases/list-shortened-urls-by-user-id/list-shortened-urls-by-user-id.usecase';
 import { UrlShortener } from '@/modules/url-shortener/domain/entities/url-shortener.entity';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 const originalEnv = process.env;
 beforeEach(() => {
@@ -16,14 +17,8 @@ afterEach(() => {
 });
 
 describe('ListShortenedUrlsByUserIdUseCase', () => {
-  const mockUrlShortenerRepository: jest.Mocked<UrlShortenerRepository> = {
-    create: jest.fn(),
-    findByUrlKey: jest.fn(),
-    findByUrlKeyAndUserId: jest.fn(),
-    findByUserId: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-  };
+  let mockUrlShortenerRepository: jest.Mocked<UrlShortenerRepository>;
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   let listShortenedUrlsByUserIdUseCase: ListShortenedUrlsByUserIdUseCase;
   const userId = 'user-123';
@@ -31,8 +26,23 @@ describe('ListShortenedUrlsByUserIdUseCase', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockUrlShortenerRepository = {
+      create: jest.fn(),
+      findByUrlKey: jest.fn(),
+      findByUrlKeyAndUserId: jest.fn(),
+      findByUserId: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
+
+    mockLoggerProvider = {
+      debug: jest.fn(),
+    } as unknown as jest.Mocked<LoggerProvider>;
+
     listShortenedUrlsByUserIdUseCase = new ListShortenedUrlsByUserIdUseCase(
       mockUrlShortenerRepository,
+      mockLoggerProvider,
     );
   });
 
