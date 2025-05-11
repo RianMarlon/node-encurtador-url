@@ -1,8 +1,8 @@
 import { BaseEntity } from '@/shared/domain/entities/base-entity';
-import { generateEntityID } from '@/shared/utils/generate-entity-id';
+import { generateUUID } from '@/shared/utils/generate-uuid';
 
-jest.mock('@/shared/utils/generate-entity-id', () => ({
-  generateEntityID: jest.fn(),
+jest.mock('@/shared/utils/generate-uuid', () => ({
+  generateUUID: jest.fn(),
 }));
 
 describe('BaseEntity', () => {
@@ -12,7 +12,7 @@ describe('BaseEntity', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.spyOn(global, 'Date').mockImplementation(() => fixedDate as unknown as Date);
-    (generateEntityID as jest.Mock).mockReturnValue(mockId);
+    (generateUUID as jest.Mock).mockReturnValue(mockId);
   });
 
   afterEach(() => {
@@ -23,7 +23,7 @@ describe('BaseEntity', () => {
     it('should create entity with generated ID and current dates when no parameters are provided', () => {
       const entity = new BaseEntity();
 
-      expect(generateEntityID).toHaveBeenCalledTimes(1);
+      expect(generateUUID).toHaveBeenCalledTimes(1);
       expect(entity.id).toBe(mockId);
       expect(entity.createdAt).toEqual(fixedDate);
       expect(entity.updatedAt).toEqual(fixedDate);
@@ -33,7 +33,7 @@ describe('BaseEntity', () => {
       const customId = 'custom-id-456';
       const entity = new BaseEntity(customId);
 
-      expect(generateEntityID).not.toHaveBeenCalled();
+      expect(generateUUID).not.toHaveBeenCalled();
       expect(entity.id).toBe(customId);
       expect(entity.createdAt).toEqual(fixedDate);
       expect(entity.updatedAt).toEqual(fixedDate);

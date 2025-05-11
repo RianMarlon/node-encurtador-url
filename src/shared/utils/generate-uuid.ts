@@ -1,5 +1,5 @@
 import { v7 as uuid } from 'uuid';
 
-export function generateEntityID(): string {
+export function generateUUID(): string {
   return uuid();
 }

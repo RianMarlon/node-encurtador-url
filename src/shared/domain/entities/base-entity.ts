@@ -1,4 +1,4 @@
-import { generateEntityID } from '../../utils/generate-entity-id';
+import { generateUUID } from '../../utils/generate-uuid';
 
 export class BaseEntity {
   private _id: string;
@@ -6,7 +6,7 @@ export class BaseEntity {
   private _updatedAt: Date;
 
   constructor(id?: string, createdAt?: Date, updatedAt?: Date) {
-    this._id = id || generateEntityID();
+    this._id = id || generateUUID();
     this._createdAt = createdAt || new Date();
     this._updatedAt = updatedAt || new Date();
   }
