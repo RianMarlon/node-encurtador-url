@@ -19,11 +19,14 @@ import { DeleteShortUrlByUrlKeyUseCase } from '@/modules/url-shortener/applicati
 import { UpdateOriginalUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/update-original-url-by-url-key/update-original-url-by-url-key.usecase';
 import { UserFacadeInterface } from '@/modules/user/facade/user.facade.interface';
 import { UserFacade } from '@/modules/user/facade/user.facade';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
+import { PinoLoggerProvider } from '../providers/logger/pino-logger-provider';
 
 const prismaClient = new PrismaClient();
 container.registerInstance('PrismaClient', prismaClient);
 container.registerSingleton<HashProvider>('HashProvider', BcryptHashProvider);
 container.registerSingleton<JwtProvider>('JwtProvider', JsonWebTokenProvider);
+container.registerSingleton<LoggerProvider>('LoggerProvider', PinoLoggerProvider);
 
 container.registerSingleton<UrlShortenerRepository>(
   'UrlShortenerRepository',
