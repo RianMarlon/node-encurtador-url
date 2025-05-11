@@ -32,6 +32,9 @@ importers:
       nanoid:
         specifier: ^3.3.11
         version: 3.3.11
+      pino:
+        specifier: ^9.6.0
+        version: 9.6.0
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
