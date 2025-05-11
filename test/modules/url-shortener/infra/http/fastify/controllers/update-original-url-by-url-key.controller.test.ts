@@ -5,6 +5,7 @@ import { container } from 'tsyringe';
 import { UpdateOriginalUrlByUrlKeyController } from '@/modules/url-shortener/infra/http/fastify/controllers/update-original-url-by-url-key.controller';
 import { UpdateOriginalUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/update-original-url-by-url-key/update-original-url-by-url-key.usecase';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 jest.mock(
   '@/modules/url-shortener/application/usecases/update-original-url-by-url-key/update-original-url-by-url-key.usecase',
@@ -13,6 +14,7 @@ jest.mock(
 describe('UpdateOriginalUrlByUrlKeyController', () => {
   let updateOriginalUrlByUrlKeyController: UpdateOriginalUrlByUrlKeyController;
   let mockUpdateOriginalUrlByUrlKeyUseCase: jest.Mocked<UpdateOriginalUrlByUrlKeyUseCase>;
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   const urlKey = '0196b231-1b20-7455-81f5-f85f8c1330a8';
   const originalUrl = 'https://example.com/updated-url';
@@ -42,7 +44,15 @@ describe('UpdateOriginalUrlByUrlKeyController', () => {
       execute: jest.fn(),
     } as unknown as jest.Mocked<UpdateOriginalUrlByUrlKeyUseCase>;
 
-    jest.spyOn(container, 'resolve').mockReturnValue(mockUpdateOriginalUrlByUrlKeyUseCase);
+    mockLoggerProvider = {
+      debug: jest.fn(),
+    } as unknown as jest.Mocked<LoggerProvider>;
+
+    container.registerInstance('LoggerProvider', mockLoggerProvider);
+    container.registerInstance(
+      UpdateOriginalUrlByUrlKeyUseCase,
+      mockUpdateOriginalUrlByUrlKeyUseCase,
+    );
 
     updateOriginalUrlByUrlKeyController = new UpdateOriginalUrlByUrlKeyController();
   });
@@ -61,7 +71,6 @@ describe('UpdateOriginalUrlByUrlKeyController', () => {
 
     await updateOriginalUrlByUrlKeyController.handle(mockRequest, mockReply);
 
-    expect(container.resolve).toHaveBeenCalledWith(UpdateOriginalUrlByUrlKeyUseCase);
     expect(mockUpdateOriginalUrlByUrlKeyUseCase.execute).toHaveBeenCalledWith({
       urlKey,
       originalUrl,

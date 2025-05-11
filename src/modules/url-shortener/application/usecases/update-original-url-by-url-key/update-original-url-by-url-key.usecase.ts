@@ -5,12 +5,15 @@ import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositor
 import { UpdateOriginalUrlByUrlKeyUseCaseInputDTO } from './dto/update-original-url-by-url-key-usecase-input.dto';
 import { UpdateOriginalUrlByUrlKeyUseCaseOutputDTO } from './dto/update-original-url-by-url-key-usecase-output.dto';
 import UseCaseInterface from '@/shared/application/use-case.interface';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 @injectable()
 export class UpdateOriginalUrlByUrlKeyUseCase implements UseCaseInterface {
   constructor(
     @inject('UrlShortenerRepository')
     private readonly urlShortenerRepository: UrlShortenerRepository,
+    @inject('LoggerProvider')
+    private readonly logger: LoggerProvider,
   ) {}
 
   async execute({
@@ -18,8 +21,14 @@ export class UpdateOriginalUrlByUrlKeyUseCase implements UseCaseInterface {
     originalUrl,
     userId,
   }: UpdateOriginalUrlByUrlKeyUseCaseInputDTO): Promise<UpdateOriginalUrlByUrlKeyUseCaseOutputDTO> {
+    this.logger.debug(
+      `Checking if the short URL with key ${urlKey} exists and belongs to the user with id ${userId} to update it`,
+    );
     const urlShortener = await this.urlShortenerRepository.findByUrlKeyAndUserId(urlKey, userId);
     if (!urlShortener) {
+      this.logger.warn(
+        `URL with key "${urlKey}" not found or does not belong to user "${userId}".`,
+      );
       throw new NotificationError([
         {
           message: 'URL not found or does not belong to this user',
@@ -29,9 +38,13 @@ export class UpdateOriginalUrlByUrlKeyUseCase implements UseCaseInterface {
       ]);
     }
 
+    this.logger.debug(
+      `Changing original URL for key ${urlKey} from ${urlShortener.originalUrl} to "${originalUrl} - User ID: ${userId}`,
+    );
     urlShortener.changeOriginalUrl(originalUrl);
 
     await this.urlShortenerRepository.update(urlShortener);
+    this.logger.info(`Original URL updated successfully for key ${urlKey} by user ${userId}`);
 
     return {
       urlKey: urlShortener.urlKey,

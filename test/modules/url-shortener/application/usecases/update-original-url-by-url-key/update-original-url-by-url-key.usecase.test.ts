@@ -8,22 +8,32 @@ import { NotificationError } from '@/shared/domain/errors/notification-error';
 jest.mock('@/modules/url-shortener/domain/entities/url-shortener.entity');
 
 describe('UpdateOriginalUrlByUrlKeyUseCase', () => {
-  const mockUrlShortenerRepository: jest.Mocked<UrlShortenerRepository> = {
-    findByUrlKey: jest.fn(),
-    findByUrlKeyAndUserId: jest.fn(),
-    findByUserId: jest.fn(),
-    create: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-  };
+  let mockUrlShortenerRepository: jest.Mocked<UrlShortenerRepository>;
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   let updateOriginalUrlByUrlKeyUseCase: UpdateOriginalUrlByUrlKeyUseCase;
   const mockDate = new Date();
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockUrlShortenerRepository = {
+      findByUrlKey: jest.fn(),
+      findByUrlKeyAndUserId: jest.fn(),
+      findByUserId: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
+    mockLoggerProvider = {
+      info: jest.fn(),
+      debug: jest.fn(),
+      warn: jest.fn(),
+    };
+
     updateOriginalUrlByUrlKeyUseCase = new UpdateOriginalUrlByUrlKeyUseCase(
       mockUrlShortenerRepository,
+      mockLoggerProvider,
     );
   });
 

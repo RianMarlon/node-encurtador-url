@@ -13,7 +13,9 @@ interface DeleteShortUrlByUrlKeyParams {
 export class DeleteShortUrlByUrlKeyController {
   async handle(request: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
     const logger = container.resolve<LoggerProvider>('LoggerProvider');
-    logger.debug(`Deleting a short URL - Request params: ${JSON.stringify(request.params)}`);
+    logger.debug(
+      `Deleting a short URL - User ID: ${request.user!.id} - Request params: ${JSON.stringify(request.params)}`,
+    );
 
     const schema = yup.object().shape({
       urlKey: yup.string().required('The urlKey parameter is required'),

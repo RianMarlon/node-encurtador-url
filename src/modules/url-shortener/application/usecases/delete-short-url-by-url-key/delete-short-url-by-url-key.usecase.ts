@@ -17,7 +17,7 @@ export class DeleteShortUrlByUrlKeyUseCase implements UseCaseInterface {
 
   async execute({ urlKey, userId }: DeleteShortUrlByUrlKeyUseCaseInputDTO): Promise<void> {
     this.logger.debug(
-      `Checking if the short URL with key ${urlKey} exists and belongs to the user with id ${userId}`,
+      `Checking if the short URL with key ${urlKey} exists and belongs to the user with id ${userId} to delete it`,
     );
     const urlShortener = await this.urlShortenerRepository.findByUrlKeyAndUserId(urlKey, userId);
     if (!urlShortener) {

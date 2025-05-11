@@ -4,6 +4,7 @@ import * as yup from 'yup';
 
 import { UpdateOriginalUrlByUrlKeyUseCase } from '@/modules/url-shortener/application/usecases/update-original-url-by-url-key/update-original-url-by-url-key.usecase';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 interface UpdateOriginalUrlByUrlKeyParams {
   urlKey: string;
@@ -15,6 +16,11 @@ interface UpdateOriginalUrlByUrlKeyBody {
 
 export class UpdateOriginalUrlByUrlKeyController {
   async handle(request: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
+    const logger = container.resolve<LoggerProvider>('LoggerProvider');
+    logger.debug(
+      `Updating original URL by urlKey - User ID: ${request.user!.id} - Request params: ${JSON.stringify(request.params)} - Request body: ${JSON.stringify(request.body)}`,
+    );
+
     const schema = yup.object().shape({
       originalUrl: yup
         .string()
