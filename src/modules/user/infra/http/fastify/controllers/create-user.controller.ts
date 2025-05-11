@@ -4,6 +4,7 @@ import * as yup from 'yup';
 
 import { CreateUserUseCase } from '@/modules/user/application/usecases/create-user/create-user.usecase';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 interface CreateUserRequest {
   name: string;
@@ -13,6 +14,9 @@ interface CreateUserRequest {
 
 export class CreateUserController {
   async handle(request: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
+    const logger = container.resolve<LoggerProvider>('LoggerProvider');
+    logger.debug(`Creating an user - Request body: ${JSON.stringify(request.body)}`);
+
     const schema = yup.object().shape({
       name: yup
         .string()

@@ -5,12 +5,15 @@ import { container } from 'tsyringe';
 import { CreateUserController } from '@/modules/user/infra/http/fastify/controllers/create-user.controller';
 import { CreateUserUseCase } from '@/modules/user/application/usecases/create-user/create-user.usecase';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 jest.mock('@/modules/user/application/usecases/create-user/create-user.usecase');
+jest.mock('@/shared/infra/providers/logger/pino-logger-provider');
 
 describe('CreateUserController', () => {
   let createUserController: CreateUserController;
   let mockCreateUserUseCase: jest.Mocked<CreateUserUseCase>;
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   const mockRequest = {
     body: {
@@ -32,7 +35,12 @@ describe('CreateUserController', () => {
       execute: jest.fn(),
     } as unknown as jest.Mocked<CreateUserUseCase>;
 
-    jest.spyOn(container, 'resolve').mockReturnValue(mockCreateUserUseCase);
+    mockLoggerProvider = {
+      debug: jest.fn(),
+    } as unknown as jest.Mocked<LoggerProvider>;
+
+    container.registerInstance('LoggerProvider', mockLoggerProvider);
+    container.registerInstance(CreateUserUseCase, mockCreateUserUseCase);
 
     createUserController = new CreateUserController();
   });
@@ -49,13 +57,11 @@ describe('CreateUserController', () => {
 
     await createUserController.handle(mockRequest, mockReply);
 
-    expect(container.resolve).toHaveBeenCalledWith(CreateUserUseCase);
     expect(mockCreateUserUseCase.execute).toHaveBeenCalledWith({
       name: 'John Doe',
       email: 'john@example.com',
       password: 'passWOrd@123',
     });
-
     expect(mockReply.status).toHaveBeenCalledWith(201);
     expect(mockReply.send).toHaveBeenCalledWith(mockResult);
   });

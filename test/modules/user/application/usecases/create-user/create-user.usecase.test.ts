@@ -6,11 +6,13 @@ import { UserRepository } from '@/modules/user/domain/repositories/user.reposito
 import { HashProvider } from '@/shared/domain/providers/hash-provider.interface';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 import { User } from '@/modules/user/domain/entities/user.entity';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 describe('CreateUserUseCase', () => {
   let createUserUseCase: CreateUserUseCase;
   let mockUserRepository: jest.Mocked<UserRepository>;
   let mockHashProvider: jest.Mocked<HashProvider>;
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   const mockUser = {
     id: 'mock-user-id',
@@ -41,7 +43,17 @@ describe('CreateUserUseCase', () => {
       compare: jest.fn(),
     } as unknown as jest.Mocked<HashProvider>;
 
-    createUserUseCase = new CreateUserUseCase(mockUserRepository, mockHashProvider);
+    mockLoggerProvider = {
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+    } as unknown as jest.Mocked<LoggerProvider>;
+
+    createUserUseCase = new CreateUserUseCase(
+      mockUserRepository,
+      mockHashProvider,
+      mockLoggerProvider,
+    );
   });
 
   afterEach(() => {
