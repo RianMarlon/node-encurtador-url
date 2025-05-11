@@ -13,14 +13,15 @@ import { userRoutes } from '@/modules/user/infra/http/fastify/user.routes';
 import { PrismaClient } from '@prisma/client/extension';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
 import { authRoutes } from '@/modules/auth/infra/http/fastify/routes/auth.routes';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
+import { TraceMiddleware } from './middlewares/trace.middleware';
 
-export const app = fastify({
-  logger: true,
-});
+export const app = fastify();
 
 // Load OpenAPI documentation from file
 const documentationPath = join(process.cwd(), 'documentation.json');
 const swaggerDocument = JSON.parse(readFileSync(documentationPath, 'utf8'));
+const traceMiddleware = new TraceMiddleware();
 
 // Register Swagger with OpenAPI document
 app.register(swagger, {
@@ -56,7 +57,11 @@ app.register(urlShortenerRoutes);
 app.register(userRoutes);
 app.register(authRoutes);
 
+app.addHook('onRequest', traceMiddleware.handle);
+
 app.setErrorHandler((error, request, reply) => {
+  const loggerProvider = container.resolve<LoggerProvider>('LoggerProvider');
+
   if (error instanceof NotificationError) {
     const codeToStatusCode = {
       BAD_REQUEST: 400,
@@ -90,7 +95,7 @@ app.setErrorHandler((error, request, reply) => {
     return;
   }
 
-  app.log.error(error);
+  loggerProvider.error(JSON.stringify(error));
   reply.status(500).send({ errors: [{ message: 'Internal Server Error' }] });
 });
 
