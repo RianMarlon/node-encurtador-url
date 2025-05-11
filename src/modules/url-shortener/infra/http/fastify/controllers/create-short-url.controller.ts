@@ -4,6 +4,7 @@ import * as yup from 'yup';
 
 import { CreateShortUrlUseCase } from '@/modules/url-shortener/application/usecases/create-short-url/create-short-url.usecase';
 import { NotificationError } from '@/shared/domain/errors/notification-error';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 interface CreateShortUrlRequest {
   originalUrl: string;
@@ -11,6 +12,9 @@ interface CreateShortUrlRequest {
 
 export class CreateShortUrlController {
   async handle(request: FastifyRequest, reply: FastifyReply): Promise<FastifyReply> {
+    const logger = container.resolve<LoggerProvider>('LoggerProvider');
+    logger.debug(`Creating a short URL - Request body: ${JSON.stringify(request.body)}`);
+
     const schema = yup.object().shape({
       originalUrl: yup
         .string()

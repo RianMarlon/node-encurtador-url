@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { UrlShortenerRepository } from '@/modules/url-shortener/domain/repositories/url-shortener.repository';
 import { CreateShortUrlUseCase } from '@/modules/url-shortener/application/usecases/create-short-url/create-short-url.usecase';
 import { CreateShortUrlUseCaseInputDTO } from '@/modules/url-shortener/application/usecases/create-short-url/dto/create-short-url-usecase-input.dto';
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 const originalEnv = process.env;
 beforeEach(() => {
@@ -16,16 +17,9 @@ afterEach(() => {
 });
 
 describe('CreateShortUrlUseCase', () => {
-  const mockUrlShortenerRepository: jest.Mocked<UrlShortenerRepository> = {
-    create: jest.fn(),
-    findByUrlKey: jest.fn(),
-    findByUrlKeyAndUserId: jest.fn(),
-    findByUserId: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-  };
-
   let createShortUrlUseCase: CreateShortUrlUseCase;
+  let mockUrlShortenerRepository: jest.Mocked<UrlShortenerRepository>;
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   const inputData: CreateShortUrlUseCaseInputDTO = {
     originalUrl: 'https://example.com/long-url',
@@ -33,7 +27,26 @@ describe('CreateShortUrlUseCase', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    createShortUrlUseCase = new CreateShortUrlUseCase(mockUrlShortenerRepository);
+
+    mockUrlShortenerRepository = {
+      create: jest.fn(),
+      findByUrlKey: jest.fn(),
+      findByUrlKeyAndUserId: jest.fn(),
+      findByUserId: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
+
+    mockLoggerProvider = {
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+    } as unknown as jest.Mocked<LoggerProvider>;
+
+    createShortUrlUseCase = new CreateShortUrlUseCase(
+      mockUrlShortenerRepository,
+      mockLoggerProvider,
+    );
   });
 
   it('should create a new short URL without userId', async () => {
