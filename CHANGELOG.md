@@ -5,6 +5,19 @@ Todas as alterações importantes neste projeto serão documentadas neste arquiv
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [v2.1.0] - 11/05/2025
+
+### Funcionalidades
+- Implementado mecanismo de logging utilizando o `LoggerProvider` baseado na biblioteca `pino`.
+
+### Alterações
+- Adicionados logs em diversos pontos da aplicação:
+  - Use cases
+  - Middlewares
+  - Controllers
+
+[v2.1.0]: https://github.com/RianMarlon/node-encurtador-url/releases/tag/v2.1.0
+
 ## [v2.0.0] - 11/05/2025
 
 ### Correção
