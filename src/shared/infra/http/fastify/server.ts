@@ -60,9 +60,11 @@ app.register(authRoutes);
 app.addHook('onRequest', traceMiddleware.handle);
 
 app.setErrorHandler((error, request, reply) => {
-  const loggerProvider = container.resolve<LoggerProvider>('LoggerProvider');
+  const logger = container.resolve<LoggerProvider>('LoggerProvider');
 
   if (error instanceof NotificationError) {
+    logger.warn(`Validation error: ${JSON.stringify(error.toJSON())}`);
+
     const codeToStatusCode = {
       BAD_REQUEST: 400,
       NOT_FOUND: 404,
@@ -84,6 +86,8 @@ app.setErrorHandler((error, request, reply) => {
   }
 
   if (error instanceof SyntaxError && error.message.includes('JSON')) {
+    logger.error(`Syntax error: ${JSON.stringify(error)}`);
+
     reply.status(400).send({
       errors: [
         {
@@ -95,7 +99,7 @@ app.setErrorHandler((error, request, reply) => {
     return;
   }
 
-  loggerProvider.error(JSON.stringify(error));
+  logger.error(`Unexpected error: ${JSON.stringify(error)}`);
   reply.status(500).send({ errors: [{ message: 'Internal Server Error' }] });
 });
 
