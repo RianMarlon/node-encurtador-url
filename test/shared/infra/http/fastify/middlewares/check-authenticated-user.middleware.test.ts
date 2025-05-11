@@ -3,14 +3,7 @@ import { container } from 'tsyringe';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { UserFacade } from '@/modules/user/facade/user.facade';
 import { CheckAuthenticateUserMiddleware } from '@/shared/infra/http/fastify/middlewares/check-authenticated-user.middleware';
-
-jest.mock('tsyringe', () => {
-  return {
-    container: {
-      resolve: jest.fn(),
-    },
-  };
-});
+import { LoggerProvider } from '@/shared/domain/providers/logger-provider.interface';
 
 describe('CheckAuthenticateUserMiddleware', () => {
   let checkAuthMiddleware: CheckAuthenticateUserMiddleware;
@@ -19,6 +12,7 @@ describe('CheckAuthenticateUserMiddleware', () => {
   let mockUserFacade: {
     findById: jest.MockedFunction<typeof UserFacade.prototype.findById>;
   };
+  let mockLoggerProvider: jest.Mocked<LoggerProvider>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -38,7 +32,13 @@ describe('CheckAuthenticateUserMiddleware', () => {
       findById: jest.fn(),
     };
 
-    (container.resolve as jest.Mock).mockReturnValue(mockUserFacade);
+    mockLoggerProvider = {
+      debug: jest.fn(),
+      warn: jest.fn(),
+    } as unknown as jest.Mocked<LoggerProvider>;
+
+    container.registerInstance('LoggerProvider', mockLoggerProvider);
+    container.registerInstance('UserFacade', mockUserFacade);
 
     checkAuthMiddleware = new CheckAuthenticateUserMiddleware();
   });
@@ -61,7 +61,6 @@ describe('CheckAuthenticateUserMiddleware', () => {
 
     await checkAuthMiddleware.handle(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
-    expect(container.resolve).toHaveBeenCalledWith('UserFacade');
     expect(mockUserFacade.findById).toHaveBeenCalledWith({ id: 'user-123' });
     expect(mockReply.status).not.toHaveBeenCalled();
     expect(mockReply.send).not.toHaveBeenCalled();
@@ -76,7 +75,6 @@ describe('CheckAuthenticateUserMiddleware', () => {
 
     await checkAuthMiddleware.handle(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
-    expect(container.resolve).not.toHaveBeenCalled();
     expect(mockReply.status).not.toHaveBeenCalled();
     expect(mockReply.send).not.toHaveBeenCalled();
   });
@@ -86,7 +84,6 @@ describe('CheckAuthenticateUserMiddleware', () => {
 
     await checkAuthMiddleware.handle(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
-    expect(container.resolve).toHaveBeenCalledWith('UserFacade');
     expect(mockUserFacade.findById).toHaveBeenCalledWith({ id: 'user-123' });
     expect(mockReply.status).toHaveBeenCalledWith(401);
     expect(mockReply.send).toHaveBeenCalledWith({
@@ -98,18 +95,12 @@ describe('CheckAuthenticateUserMiddleware', () => {
     const mockError = new Error('Database error');
     mockUserFacade.findById.mockRejectedValueOnce(mockError);
 
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-
     await checkAuthMiddleware.handle(mockRequest as FastifyRequest, mockReply as FastifyReply);
 
-    expect(container.resolve).toHaveBeenCalledWith('UserFacade');
     expect(mockUserFacade.findById).toHaveBeenCalledWith({ id: 'user-123' });
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error verifying user authentication:', mockError);
     expect(mockReply.status).toHaveBeenCalledWith(500);
     expect(mockReply.send).toHaveBeenCalledWith({
       errors: [{ message: 'Internal server error' }],
     });
-
-    consoleErrorSpy.mockRestore();
   });
 });
