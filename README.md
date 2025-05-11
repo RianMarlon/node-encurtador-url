@@ -16,6 +16,7 @@ Um serviço de encurtamento de URLs desenvolvido com TypeScript, Fastify e Prism
 - TypeScript
 - Fastify
 - Prisma ORM
+- Pino (logs)
 - Jest (testes)
 - ESLint & Prettier (linting e formatação)
 - SWC (compilação)
